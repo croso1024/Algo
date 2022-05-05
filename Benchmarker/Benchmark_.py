@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 import networkx as nx 
 from networkx.algorithms import approximation as algo
 import json 
-from exhaustive_slover import SolutionPool
+#from exhaustive_slover import SolutionPool
+
 class Benchmarker(nx.Graph): 
     
     def __init__(self): 
@@ -64,31 +65,40 @@ class Benchmarker(nx.Graph):
             total_cost += cls.All_pair_cost[curNode][nextNode]  
         print("The solution total cost is {}".format(total_cost))
         print("Solution:{}".format(nodes))
-        return total_cost
-    # @classmethod
-    # def _Dispatcher(cls,request): 
-    #     solution_list = SolutionPool(request) 
-    #     optimal_cost = float("inf")
-    #     for route in solution_list: 
-    #         cost = cls._routeCost(route) 
-    #         if cost < optimal_cost: 
-    #             optimal_cost = cost 
-    #         else: 
-    #             pass 
-    #         print("current optimal".format(optimal_cost))
-    #     print("optimal cost : {}".format(optimal_cost))
+        return total_cost,nodes
+
     @classmethod 
-    def exhaustive(cls,nodelist,sol=""): 
-        if len(nodelist) == 0: 
-            cost = cls._routeCost(sol)
-            if cost < optimal_cost: 
-                optimal_cost = cost 
-            else: 
-                pass 
-        else: 
-            for i in range(len(nodelist)): 
-                cls.exhaustive(nodelist[:i]+nodelist[i+1:],sol+nodelist[i])
-   
+    def exhaustive_slover(cls,nodelist):
+        optimal_cost = float("inf")
+        best_sol = None
+        stoping_count = 0
+        cost_array = []
+        def exhaustive(nodelist,sol=""): 
+            nonlocal optimal_cost,best_sol,cost_array,stoping_count
+            if stoping_count >=20: 
+                print("jump")
+                return 
+            else:
+                if len(nodelist) == 0: 
+                    print("---------------------")
+                    print("optimal cost now {}".format(optimal_cost))
+                    cost,solution = cls._routeCost(sol)
+                    if cost >= optimal_cost: 
+                        stoping_count+=1 
+                    
+                    if cost < optimal_cost : 
+                        optimal_cost = cost 
+                        best_sol = solution
+                        stoping_count=0
+                    else: 
+                        pass 
+                    
+                    cost_array.append(optimal_cost)
+                else: 
+                    for i in range(len(nodelist)): 
+                        exhaustive(nodelist[:i]+nodelist[i+1:],sol+nodelist[i])
+        exhaustive(nodelist)
+        return optimal_cost,best_sol,cost_array
 
     
 
@@ -99,10 +109,15 @@ class Benchmarker(nx.Graph):
         nx.draw_networkx(graph,pos =pos_mode ,node_size=100,with_labels=True,font_size=15)
         nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=15)
 
+
 Benchmarker.setting()
 Benchmarker.Source_graphLoading()
 Benchmarker.plotting(Benchmarker.SourceGraph)
 #g = Benchmarker._subGraph(["A","B","C"])
-Benchmarker._Dispatcher(["A","B","C","D","E"])
+bestCost,bestSol,cost_array = Benchmarker.exhaustive_slover(["A","C","D","E","F","G"])
+print("best cost: {} , best solution :{} ".format(bestCost,bestSol))
 #Benchmarker.plotting(g)
+plt.show()
+
+plt.plot(range(len(cost_array)),cost_array)
 plt.show()
