@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import networkx as nx 
 from networkx.algorithms import approximation as algo
 import json 
-from exhaustive_slover import _exhaustive_slover
+
 
 class Benchmarker(nx.Graph): 
     
@@ -42,20 +42,6 @@ class Benchmarker(nx.Graph):
     
     #excepted request is list including dispatch msg {"account":,location.. ,"uuid"}
     #nodes --> pure "location" , anything attribute likes uuid will be append on request 
-    @classmethod
-    def _subGraph(cls,nodes):  #--> 暫時棄用, 直接採用All pair dijkstra一同保存在class中 ,更有彈性去應對動態節點變化
-        subGraph = cls()
-        All_pair_distance = dict(nx.all_pairs_dijkstra_path_length(cls.SourceGraph))
-        for node in nodes: 
-            subGraph.add_node(node)
-        for i,node in enumerate(nodes): 
-            for j in range(i+1,len(nodes)) : 
-            #index = cls.station_list.index(node) 
-                print(j)
-                cost  = All_pair_distance[node][nodes[j]]  
-                subGraph.add_edge(node,nodes[j],weight=cost)  
-        return subGraph 
-    
     @classmethod 
     def _routeCost(cls,nodes: list): 
         total_cost = 0  
@@ -68,7 +54,6 @@ class Benchmarker(nx.Graph):
         return total_cost,nodes
 
 
-
     @staticmethod
     def plotting(graph):
         pos_mode = nx.kamada_kawai_layout(graph)
@@ -76,15 +61,7 @@ class Benchmarker(nx.Graph):
         nx.draw_networkx(graph,pos =pos_mode ,node_size=100,with_labels=True,font_size=15)
         nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=15)
 
-
-Benchmarker.setting()
-Benchmarker.Source_graphLoading()
-Benchmarker.plotting(Benchmarker.SourceGraph)
-#g = Benchmarker._subGraph(["A","B","C"])
-bestCost,bestSol,cost_array = _exhaustive_slover(["A","C","D","E","F","G"])
-print("best cost: {} , best solution :{} ".format(bestCost,bestSol))
-#Benchmarker.plotting(g)
-plt.show()
-
-plt.plot(range(len(cost_array)),cost_array)
-plt.show()
+if __name__ == "__main__": 
+    Benchmarker.setting()
+    Benchmarker.Source_graphLoading()
+    Benchmarker.plotting(Benchmarker.SourceGraph)
