@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import networkx as nx 
 from networkx.algorithms import approximation as algo
 import json 
-#from exhaustive_slover import SolutionPool
+from exhaustive_slover import _exhaustive_slover
 
 class Benchmarker(nx.Graph): 
     
@@ -67,40 +67,7 @@ class Benchmarker(nx.Graph):
         print("Solution:{}".format(nodes))
         return total_cost,nodes
 
-    @classmethod 
-    def exhaustive_slover(cls,nodelist):
-        optimal_cost = float("inf")
-        best_sol = None
-        stoping_count = 0
-        cost_array = []
-        def exhaustive(nodelist,sol=""): 
-            nonlocal optimal_cost,best_sol,cost_array,stoping_count
-            if stoping_count >=20: 
-                print("jump")
-                return 
-            else:
-                if len(nodelist) == 0: 
-                    print("---------------------")
-                    print("optimal cost now {}".format(optimal_cost))
-                    cost,solution = cls._routeCost(sol)
-                    if cost >= optimal_cost: 
-                        stoping_count+=1 
-                    
-                    if cost < optimal_cost : 
-                        optimal_cost = cost 
-                        best_sol = solution
-                        stoping_count=0
-                    else: 
-                        pass 
-                    
-                    cost_array.append(optimal_cost)
-                else: 
-                    for i in range(len(nodelist)): 
-                        exhaustive(nodelist[:i]+nodelist[i+1:],sol+nodelist[i])
-        exhaustive(nodelist)
-        return optimal_cost,best_sol,cost_array
 
-    
 
     @staticmethod
     def plotting(graph):
@@ -114,7 +81,7 @@ Benchmarker.setting()
 Benchmarker.Source_graphLoading()
 Benchmarker.plotting(Benchmarker.SourceGraph)
 #g = Benchmarker._subGraph(["A","B","C"])
-bestCost,bestSol,cost_array = Benchmarker.exhaustive_slover(["A","C","D","E","F","G"])
+bestCost,bestSol,cost_array = _exhaustive_slover(["A","C","D","E","F","G"])
 print("best cost: {} , best solution :{} ".format(bestCost,bestSol))
 #Benchmarker.plotting(g)
 plt.show()
