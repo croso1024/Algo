@@ -4,7 +4,9 @@
 # initial condition : available robot / source graph  / edge cost / request 
 # 平台本身hold著一個source graph的資料,只有點名稱以及點與點的連接關係和cost
 # instance則是不同情況下的 sub-graph, 支援add / delete 功能
+from matplotlib import animation
 import matplotlib.pyplot as plt 
+from matplotlib.animation import FuncAnimation
 import networkx as nx 
 from networkx.algorithms import approximation as algo
 import json 
@@ -16,7 +18,7 @@ class Benchmarker(nx.Graph):
         super().__init__(self) 
     @classmethod 
     def setting(cls,setting_file_path=None): 
-        cls.source_path = "Adjency.json"
+        cls.source_path = "Adjency3.json"
     @classmethod  
     def Source_graphLoading(cls): 
         #sourceGraph = Benchmarker() 
@@ -39,6 +41,7 @@ class Benchmarker(nx.Graph):
         cls.SourceGraph = sourceGraph 
         cls.All_pair_cost = dict(nx.all_pairs_dijkstra_path_length(cls.SourceGraph))
         print("Source graph Loading complete")
+        print(cls.All_pair_cost)
     
     #excepted request is list including dispatch msg {"account":,location.. ,"uuid"}
     #nodes --> pure "location" , anything attribute likes uuid will be append on request 
@@ -53,13 +56,14 @@ class Benchmarker(nx.Graph):
         print("Solution:{}".format(nodes))
         return total_cost,nodes
 
-
     @staticmethod
     def plotting(graph):
         pos_mode = nx.kamada_kawai_layout(graph)
         cost_label = nx.get_edge_attributes(graph,"weight")
-        nx.draw_networkx(graph,pos =pos_mode ,node_size=100,with_labels=True,font_size=15)
-        nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=15)
+        nx.draw_networkx(graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
+        nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=3)
+
+        
 
 if __name__ == "__main__": 
     Benchmarker.setting()
