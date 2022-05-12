@@ -52,8 +52,8 @@ class Benchmarker(nx.Graph):
             curNode = nodes[step]
             nextNode = nodes[step+1]
             total_cost += cls.All_pair_cost[curNode][nextNode]  
-        print("The solution total cost is {}".format(total_cost))
-        print("Solution:{}".format(nodes))
+        #print("The solution total cost is {}".format(total_cost))
+        #print("Solution:{}".format(nodes))
         return total_cost,nodes
 
     @staticmethod
