@@ -19,12 +19,14 @@ def createFromJSON(input_path,out_path):
         file.write(json.dumps(data))
         
 def createFromText(size: int , out_path): 
-    dot  = ["ABCDEFGHIJKLMNOPQRSTUV"] 
+    dot  = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
     location ,length= dot[:size] , len(dot[:size])
+    print(location)
     matrix = np.random.randint(low=0,high = 10 , size= (3,length))
     adj = np.dot(matrix.transpose(),matrix)
     adj = adj.tolist() 
     with open(out_path,"w") as file:
         data = {"station":location , "adjencyMatrix":adj}
         file.write(json.dumps(data))
-        
+    
+createFromText(12,"longStation.json") 
