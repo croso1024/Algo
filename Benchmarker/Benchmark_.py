@@ -18,7 +18,8 @@ class Benchmarker(nx.Graph):
         super().__init__(self) 
     @classmethod 
     def setting(cls,setting_file_path=None): 
-        cls.source_path = "Adjency3.json"
+        #cls.source_path = "Adjency3.json"
+        cls.source_path = "longStation.json"
     @classmethod  
     def Source_graphLoading(cls): 
         #sourceGraph = Benchmarker() 

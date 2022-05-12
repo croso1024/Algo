@@ -74,7 +74,7 @@ class Exhaustiver:
 Benchmarker.setting()
 Benchmarker.Source_graphLoading()
 Exhauser = Exhaustiver() 
-
-Exhauser.init_Generator(["1F_start","1F_HenGi","1F_forest","1F_stage","1F_gate_1","1F_willy_destroy","1F_table"]) 
+Exhauser.init_Generator(["B","C","D","E","G","A"]) 
+#Exhauser.init_Generator(["1F_start","1F_HenGi","1F_forest","1F_stage","1F_gate_1","1F_willy_destroy","1F_table"]) 
 opt_cost,opt_route = Exhauser.evaluate() 
 Exhauser.plotting()
