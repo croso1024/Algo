@@ -6,7 +6,7 @@
 # instance則是不同情況下的 sub-graph, 支援add / delete 功能
 from matplotlib import animation
 import matplotlib.pyplot as plt 
-from matplotlib.animation import FuncAnimation
+
 import networkx as nx 
 from networkx.algorithms import approximation as algo
 import json 
@@ -18,7 +18,7 @@ class Benchmarker(nx.Graph):
         super().__init__(self) 
     @classmethod 
     def setting(cls,setting_file_path=None): 
-        #cls.source_path = "Adjency3.json"
+        #cls.source_path = "Adjency.json"
         cls.source_path = "longStation.json"
     @classmethod  
     def Source_graphLoading(cls): 
