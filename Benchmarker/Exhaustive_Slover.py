@@ -67,6 +67,7 @@ class Exhaustiver:
 
     def plotting(self): 
         #print(self.Cost_Array)
+        print("daw")
         plt.subplot(1,2,1),Benchmarker.plotting(Benchmarker.SourceGraph)
         plt.subplot(1,2,2),plt.plot(range(len(self.Cost_Array)),self.Cost_Array) 
         plt.show()
