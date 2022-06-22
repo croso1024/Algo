@@ -4,7 +4,7 @@ import numpy as np
 from Benchmark_ import Benchmarker
 import time 
 from collections import namedtuple 
-
+import matplotlib.pyplot as plt 
 class Tabu_Search: 
 
     cost_function = Benchmarker._routeCost
@@ -18,6 +18,7 @@ class Tabu_Search:
         self.tabu = []  
         self.current_solution = initial_solution  # --> represent the current position (solution) 
         self.iteration_num = iteration_num
+        self.solution_log = [] 
         
     def get_Neighborhood(self):     
         # 找到一個解的所有neighborhood作為generator
@@ -93,7 +94,7 @@ class Tabu_Search:
         
         if len(self.tabu) > self.tabu_size: 
             self.tabu.pop() 
-        
+        self.solution_log.append(self.best_solutionCost)
         self.iteration_num +=1 
 
     def Optimization(self): 
@@ -102,9 +103,11 @@ class Tabu_Search:
         
         print(f"best solution: {self.best_solution}")
         print(f"best solution cost: {self.best_solutionCost}")
-        
+        plt.plot(range(len(self.solution_log)) , self.solution_log)
+        plt.show()
 if __name__ =="__main__": 
     Benchmarker.setting() 
     Benchmarker.Source_graphLoading() 
-    Tabu = Tabu_Search(initial_solution=["B","A","E","G","D","K","I","H","C","L"],iteration_num=20)
+    Tabu = Tabu_Search(initial_solution=["B","A","E","G","D","K","I","H","C","L"],iteration_num=10)
+    #Tabu = Tabu_Search(initial_solution=["G","D","A","I","C","L"],iteration_num=20)
     Tabu.Optimization()
