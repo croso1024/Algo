@@ -8,7 +8,7 @@ class Exhaustiver:
         self.Optimal_cost = float("inf")
         self.Best_solution =None
         self.iteration_step = 1000
-        self.Early_stop = 200
+        self.Early_stop = 300
         self.Cost_Array = []
 
     def init_Generator(self,iterable): 
@@ -75,7 +75,7 @@ class Exhaustiver:
 Benchmarker.setting()
 Benchmarker.Source_graphLoading()
 Exhauser = Exhaustiver() 
-Exhauser.init_Generator(["B","C","D","E","G","A"]) 
+Exhauser.init_Generator(["B","A","E","G","D","K","I","H","C","L"]) 
 #Exhauser.init_Generator(["1F_start","1F_HenGi","1F_forest","1F_stage","1F_gate_1","1F_willy_destroy","1F_table"]) 
 opt_cost,opt_route = Exhauser.evaluate() 
 Exhauser.plotting()
