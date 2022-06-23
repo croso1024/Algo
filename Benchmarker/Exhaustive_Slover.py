@@ -4,13 +4,14 @@ import matplotlib.pyplot as plt
 
 class Exhaustiver: 
 
-    def __init__(self):
+    def __init__(self , vehicle_num):
         self.Optimal_cost = float("inf")
         self.Best_solution =None
         self.iteration_step = 1000
-        self.Early_stop = 300
+        self.Early_stop = 500
         self.Cost_Array = []
-
+        self.vehicle_num = vehicle_num
+        
     def init_Generator(self,iterable): 
         Generator = permutations(iterable) 
         self.Generator = Generator 
@@ -74,9 +75,15 @@ class Exhaustiver:
 
 Benchmarker.setting()
 Benchmarker.Source_graphLoading()
-Exhauser = Exhaustiver() 
-#Exhauser.init_Generator(["B","A","E","G","D","K","I","H","C","L"]) 
-Exhauser.init_Generator(["G","D","A","I","C","L"]) 
+#Exhauser = Exhaustiver() 
+#Exhauser.init_Generator(["B","A","E","G","D","K","I","H","C","L","M","O","Q","R"]) 
+#Exhauser.init_Generator(["G","D","A","I","C","L"]) 
 #Exhauser.init_Generator(["1F_start","1F_HenGi","1F_forest","1F_stage","1F_gate_1","1F_willy_destroy","1F_table"]) 
-opt_cost,opt_route = Exhauser.evaluate() 
-Exhauser.plotting()
+#opt_cost,opt_route = Exhauser.evaluate() 
+#Exhauser.plotting()
+
+
+a = ["A","B","F","|","E","|","C","G"]
+#a= ["A","B"]
+print(Benchmarker.MultiVehicle_Cost(3,a) )
+#print(Benchmarker._routeCost(a))

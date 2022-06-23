@@ -29,4 +29,4 @@ def createFromText(size: int , out_path):
         data = {"station":location , "adjencyMatrix":adj}
         file.write(json.dumps(data))
     
-createFromText(12,"longStation.json") 
+createFromText(6,"longStation.json") 

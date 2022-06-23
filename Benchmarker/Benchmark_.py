@@ -14,12 +14,15 @@ import json
 
 class Benchmarker(nx.Graph): 
     
+    vehicle_set = ["ANEV01","ANEV02","ANEV03"]
+    vehicle_pos = {"ANEV01":"A","ANEV02":"A","ANEV03":"A"}
+    
     def __init__(self): 
         super().__init__(self) 
     @classmethod 
     def setting(cls,setting_file_path=None): 
-        #cls.source_path = "Adjency.json"
-        cls.source_path = "map/longStation.json"
+        cls.source_path = "map/Adjency.json"
+        #cls.source_path = "map/longStation.json"
     @classmethod  
     def Source_graphLoading(cls): 
         #sourceGraph = Benchmarker() 
@@ -57,6 +60,50 @@ class Benchmarker(nx.Graph):
         #print("Solution:{}".format(nodes))
         return total_cost,nodes
 
+
+                
+    @classmethod
+    def Solution_parser(cls,vehicle_num,nodes) : 
+        sub_set = [list() for i in range(vehicle_num)]
+        # for first vehicle 
+        n_path = 0 
+        sub_set[n_path].insert(0,cls.vehicle_pos[cls.vehicle_set[n_path]])  
+        
+        for station in nodes: 
+
+            if not station == "|":  #沒有遇到symbol的時候就單純加入list
+                sub_set[n_path].append(station) 
+    
+            else : 
+                # 遇到symbol, 將下一台車的位置加入,開始整理下一台車負責的解集合
+                n_path +=1 
+                sub_set[n_path].insert(0,cls.vehicle_pos[cls.vehicle_set[n_path]])   
+                
+        for n, nth_sub_set in enumerate(sub_set) : 
+            if len(nth_sub_set) == 1:  # mean in this solution the n-th vehicle dosen't have any mission
+                sub_set[n] = []
+            
+        return sub_set 
+
+    @classmethod 
+    def MultiVehicle_Cost(cls,vehicle_num,nodes:list): 
+        solution_set  = cls.Solution_parser(vehicle_num , nodes)
+        cost_set = [0 for i in range(vehicle_num)]
+
+        for n, nth_solution in enumerate(solution_set) : 
+            if nth_solution : # this solution have waypoint ( len(solution) > 0 )
+                cost_set[n], ret  = cls._routeCost(nth_solution)
+            else : 
+                cost_set[n] = 0  
+        
+        #criterion 1 . min Sum , minimize the total cost for every vehicle  
+        Cost = sum(cost_set) 
+        #criterion 2 , min Max , minimize the most cost vehicle in set     
+        #Cost = max(cost_set)
+        return Cost , nodes
+        
+        
+        
     @staticmethod
     def plotting(graph):
         pos_mode = nx.kamada_kawai_layout(graph)
