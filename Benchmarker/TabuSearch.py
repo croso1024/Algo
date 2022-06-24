@@ -7,24 +7,40 @@ from collections import namedtuple
 import matplotlib.pyplot as plt 
 class Tabu_Search: 
 
-    cost_function = Benchmarker._routeCost
+    #cost_function = Benchmarker._routeCost
     tabu_size = 30 
     
     move = namedtuple("move",["index1","value1","index2","value2"])
 
-    def __init__(self,initial_solution,iteration_num):
+    def __init__(self,initial_solution,iteration_num,vehicle_num=1):
+        
         self.best_solutionCost = np.inf 
         self.best_solution = None 
         self.tabu = []  
+        
         self.current_solution = initial_solution  # --> represent the current position (solution) 
         self.iteration_num = iteration_num
+        self.vehicle_num = vehicle_num
+        
         self.solution_log = [] 
+        if vehicle_num > 1 : 
+            self.cost_function = Benchmarker.MultiVehicle_Cost 
+            self.MultiVehicle_adjust() 
+            
+        else : 
+            self.cost_function = Benchmarker._routeCost 
         
     def get_Neighborhood(self):     
         # 找到一個解的所有neighborhood作為generator
         # 這裡直接用list後相當於沒有generator的特性了, 是一次列出所有可能 C(n,2) 為 O(n^2) 
         swap_generator = combinations(range(len(self.current_solution)),2)
         self.swap_list =  list(swap_generator)   
+        
+    def MultiVehicle_adjust(self): 
+        step = len(self.current_solution)//self.vehicle_num 
+        for i in range(self.vehicle_num-1): 
+            self.current_solution.insert((i+1)*step,"|") 
+
         
     def swap(self,solution,move):   
         solution[move.index1] , solution[move.index2] = solution[move.index2] ,solution[move.index1] 
@@ -63,7 +79,7 @@ class Tabu_Search:
             self.swap(neighborhood,move) 
             #print(f"neighborhood after swap {neighborhood}")
             #print("-----------------------------------------")
-            neighborhood_cost = self.cost_function(neighborhood)[0]
+            neighborhood_cost = self.cost_function(neighborhood,self.vehicle_num)[0]
 
             is_tabu = self.tabu_rule(neighborhood,move) 
 
@@ -108,6 +124,6 @@ class Tabu_Search:
 if __name__ =="__main__": 
     Benchmarker.setting() 
     Benchmarker.Source_graphLoading() 
-    Tabu = Tabu_Search(initial_solution=["B","A","E","G","D","K","I","H","C","L","M","O","Q","R"],iteration_num=100)
+    Tabu = Tabu_Search(initial_solution=["B","A","E","G","D","K","I","H","C","L","M","O","Q","R"],iteration_num=10,vehicle_num=4)
     #Tabu = Tabu_Search(initial_solution=["G","D","A","I","C","L"],iteration_num=20)
     Tabu.Optimization()
