@@ -49,14 +49,14 @@ class Exhaustiver:
         rev = False 
         try:
             for step in range(self.iteration_step):
-
-                candidate = self.getSolution()
-                print(candidate)
                 
+                candidate = self.getSolution()
+                
+                print("ttt1")
                 #cost,solution = Benchmarker._routeCost(candidate)
                 cost,solution= self.cost_function(candidate,self.vehicle_num)
+                print("ttt2")
                 
-                print("ttt")
                 if rev: 
                     l = len(candidate)//2 
                     candidate = candidate[l:]+ candidate[:l]
@@ -67,7 +67,7 @@ class Exhaustiver:
                     #cost,solution = Benchmarker._routeCost(candidate)
                     cost,solution= self.cost_function(candidate,self.vehicle_num)
                     # TODO reverse
-                print("abs")
+                print("abs1")
                 if cost < self.Optimal_cost: 
                     self.Optimal_cost = cost 
                     self.Best_solution = solution
@@ -76,9 +76,9 @@ class Exhaustiver:
                 else:  
                     stop_count +=1 
                     rev_count +=1 
-
+                
                 self.Cost_Array.append(self.Optimal_cost) 
-
+                print("abs2")
                 if rev_count >= 8: 
                      rev = not rev 
                      rev_count = 0
@@ -107,8 +107,8 @@ class Exhaustiver:
 Benchmarker.setting()
 Benchmarker.Source_graphLoading()
 
-Exahuser = Exhaustiver(initial_solution=["G","D","A","B","E","C"],iteration_num=3000,vehicle_num=2)
-
+#Exahuser = Exhaustiver(initial_solution=["b","D","a","B","E","C","2","5","H","j","h","L","e","T","s","4","K",'l'],iteration_num=1000,vehicle_num=2)
+Exahuser = Exhaustiver(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],iteration_num=400,vehicle_num=2)
 Exahuser.evaluate()
 
 #print(Exahuser.cost_function(['G', 'D', 'A', 'I', 'C', 'L']))

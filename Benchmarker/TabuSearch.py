@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 class Tabu_Search: 
 
     #cost_function = Benchmarker._routeCost
-    tabu_size = 30 
+    tabu_size = 200 
     
     move = namedtuple("move",["index1","value1","index2","value2"])
 
@@ -40,6 +40,7 @@ class Tabu_Search:
         step = len(self.current_solution)//self.vehicle_num 
         for i in range(self.vehicle_num-1): 
             self.current_solution.insert((i+1)*step,"|") 
+        print(self.current_solution)
 
         
     def swap(self,solution,move):   
@@ -116,6 +117,7 @@ class Tabu_Search:
     def Optimization(self): 
         for iteration  in range(self.iteration_num):
             self.Iteration()
+            
         
         print(f"best solution: {self.best_solution}")
         print(f"best solution cost: {self.best_solutionCost}")
@@ -125,5 +127,6 @@ if __name__ =="__main__":
     Benchmarker.setting() 
     Benchmarker.Source_graphLoading() 
     #Tabu = Tabu_Search(initial_solution=["B","A","E","G","D","K","I","H","C","L","M","O","Q","R"],iteration_num=10,vehicle_num=4)
-    Tabu = Tabu_Search(initial_solution=["G","D","A","B","E","C"],iteration_num=20,vehicle_num=2)
+    Tabu = Tabu_Search(initial_solution=["1F_stage","1F_forest","1F_HenGi","1F_table","1F_gate_2","1F_willy_destroy"],iteration_num=10000,vehicle_num=2)
+    #Tabu = Tabu_Search(initial_solution=["b","D","a","B","E","C","2","5","H","j","h","L","e","T","s","4","K",'l'],iteration_num=2000,vehicle_num=3)
     Tabu.Optimization()

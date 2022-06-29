@@ -15,14 +15,14 @@ import json
 class Benchmarker(nx.Graph): 
     
     vehicle_set = ["ANEV01","ANEV02","ANEV03","ANEV04"]
-    vehicle_pos = {"ANEV01":"A","ANEV02":"A","ANEV03":"A","ANEV04":"A"}
+    vehicle_pos = {"ANEV01":"1F_start","ANEV02":"1F_start","ANEV03":"1F_start","ANEV04":"B"}
     
     def __init__(self): 
         super().__init__(self) 
     @classmethod 
     def setting(cls,setting_file_path=None): 
-        cls.source_path = "map/Adjency.json"
-        #cls.source_path = "map/longStation2.json"
+        cls.source_path = "map/Adjency3.json"
+        #cls.source_path = "map/building_big.json"
     @classmethod  
     def Source_graphLoading(cls): 
         #sourceGraph = Benchmarker() 
@@ -52,9 +52,13 @@ class Benchmarker(nx.Graph):
     @classmethod 
     def _routeCost(cls,nodes: list,vehicle_num=1): 
         total_cost = 0  
+        #nodes = cls.Solution_parser(vehicle_num=1,nodes=nodes)[0]
+        nodes.insert(0,cls.vehicle_pos[cls.vehicle_set[0]])
+        
         for step in range( len(nodes)-1 ): 
             curNode = nodes[step]
             nextNode = nodes[step+1]
+            #print(cls.All_pair_cost[curNode][nextNode])
             total_cost += cls.All_pair_cost[curNode][nextNode]  
         #print("The solution total cost is {}".format(total_cost))
         #print("Solution:{}".format(nodes))
@@ -63,7 +67,7 @@ class Benchmarker(nx.Graph):
 
                 
     @classmethod
-    def Solution_parser(cls,vehicle_num,nodes) : 
+    def Solution_parser(cls,vehicle_num,nodes,backToHome=False) : 
         sub_set = [list() for i in range(vehicle_num)]
         # for first vehicle 
         n_path = 0 
@@ -83,7 +87,7 @@ class Benchmarker(nx.Graph):
         for n, nth_sub_set in enumerate(sub_set) : 
             if len(nth_sub_set) == 1:  # mean in this solution the n-th vehicle dosen't have any mission
                 sub_set[n] = []
-            
+        
         return sub_set 
 
     @classmethod 
@@ -96,11 +100,11 @@ class Benchmarker(nx.Graph):
                 cost_set[n], ret  = cls._routeCost(nth_solution)
             else : 
                 cost_set[n] = 0  
-        
+        #print(cost_set)
         #criterion 1 . min Sum , minimize the total cost for every vehicle  
-        #Cost = sum(cost_set) 
+        Cost = sum(cost_set) 
         #criterion 2 , min Max , minimize the most cost vehicle in set     
-        Cost = max(cost_set)
+        #Cost = max(cost_set)
         return Cost , nodes
         
         
@@ -109,8 +113,8 @@ class Benchmarker(nx.Graph):
         pos_mode = nx.kamada_kawai_layout(graph)
         cost_label = nx.get_edge_attributes(graph,"weight")
         nx.draw_networkx(graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
-        nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=3)
-
+        nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=6)
+        #plt.show()
 
     @classmethod 
     def inference(cls,map_set,vehicle_set,Algorithm_set): 
