@@ -107,7 +107,7 @@ class Exhaustiver:
 Benchmarker.setting()
 Benchmarker.Source_graphLoading()
 
-Exahuser = Exhaustiver(initial_solution=["G","D","A","I","C","L"],iteration_num=3200,vehicle_num=3)
+Exahuser = Exhaustiver(initial_solution=["G","D","A","B","E","C"],iteration_num=3000,vehicle_num=2)
 
 Exahuser.evaluate()
 

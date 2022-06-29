@@ -124,6 +124,6 @@ class Tabu_Search:
 if __name__ =="__main__": 
     Benchmarker.setting() 
     Benchmarker.Source_graphLoading() 
-    Tabu = Tabu_Search(initial_solution=["B","A","E","G","D","K","I","H","C","L","M","O","Q","R"],iteration_num=10,vehicle_num=4)
-    #Tabu = Tabu_Search(initial_solution=["G","D","A","I","C","L"],iteration_num=20)
+    #Tabu = Tabu_Search(initial_solution=["B","A","E","G","D","K","I","H","C","L","M","O","Q","R"],iteration_num=10,vehicle_num=4)
+    Tabu = Tabu_Search(initial_solution=["G","D","A","B","E","C"],iteration_num=20,vehicle_num=2)
     Tabu.Optimization()

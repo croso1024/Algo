@@ -21,8 +21,8 @@ class Benchmarker(nx.Graph):
         super().__init__(self) 
     @classmethod 
     def setting(cls,setting_file_path=None): 
-        #cls.source_path = "map/Adjency.json"
-        cls.source_path = "map/longStation2.json"
+        cls.source_path = "map/Adjency.json"
+        #cls.source_path = "map/longStation2.json"
     @classmethod  
     def Source_graphLoading(cls): 
         #sourceGraph = Benchmarker() 
@@ -98,9 +98,9 @@ class Benchmarker(nx.Graph):
                 cost_set[n] = 0  
         
         #criterion 1 . min Sum , minimize the total cost for every vehicle  
-        Cost = sum(cost_set) 
+        #Cost = sum(cost_set) 
         #criterion 2 , min Max , minimize the most cost vehicle in set     
-        #Cost = max(cost_set)
+        Cost = max(cost_set)
         return Cost , nodes
         
         
