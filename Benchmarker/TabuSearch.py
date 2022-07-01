@@ -129,5 +129,5 @@ if __name__ =="__main__":
     #Tabu = Tabu_Search(initial_solution=["B","A","E","G","D","K","I","H","C","L","M","O","Q","R"],iteration_num=10,vehicle_num=4)
     #Tabu = Tabu_Search(initial_solution=["1F_stage","1F_forest","1F_HenGi","1F_table","1F_gate_2","1F_willy_destroy"],iteration_num=10000,vehicle_num=2)
     #Tabu = Tabu_Search(initial_solution=["b","D","a","B","E","C","2","5","H","j","h","L","e","T","s","4","K",'l'],iteration_num=2000,vehicle_num=3)
-    Tabu = Tabu_Search(initial_solution=["A","B","C","D","E","F"],iteration_num=30,vehicle_num=1)
+    Tabu = Tabu_Search(initial_solution=["A","b","e","2","E","C","d","4","G"],iteration_num=30,vehicle_num=1)
     Tabu.Optimization()

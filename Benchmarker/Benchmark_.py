@@ -21,8 +21,8 @@ class Benchmarker(nx.Graph):
         super().__init__(self) 
     @classmethod 
     def setting(cls,setting_file_path=None): 
-        cls.source_path = "map/Adjency.json"
-        #cls.source_path = "map/building_big.json"
+        #cls.source_path = "map/Adjency.json"
+        cls.source_path = "map/building_small.json"
     @classmethod  
     def Source_graphLoading(cls): 
         #sourceGraph = Benchmarker() 

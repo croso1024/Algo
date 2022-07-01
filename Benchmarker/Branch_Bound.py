@@ -64,7 +64,7 @@ class Branch_Bound:
         initial_solution.pop(0)# fix the effect of call _routeCost ( add a station of vehicle pos )
         
         self.current_node = Node(search_set=initial_solution,location=vehicle_location)
-        print("--------",self.current_node.search_set)
+        #print("--------",self.current_node.search_set)
         self.current_node.nodebound = 0 # root cost(bound) = 0  
 
         self.find_solution_num = 0
@@ -75,7 +75,7 @@ class Branch_Bound:
         # findout all branch that node can search , and evaluate them , 
         #print(f"current node search_set = {self.current_node.search_set}")
         for i,location in enumerate(self.current_node.search_set)  :
-            print(f"current node search_set = {self.current_node.search_set},location:{location}")
+            #print(f"current node search_set = {self.current_node.search_set},location:{location}")
             sub_solution =  self.current_node.search_set.copy()
             sub_solution.pop(i)
             node = Node(parent=self.current_node,search_set=sub_solution,location=location) # pass the residue subprobelm_set to next level node 
@@ -87,11 +87,12 @@ class Branch_Bound:
                 node.evaluate()  #--> calculate this node lowwer bound 
                 #node.nodebound = node.parent.nodebound +  Benchmarker.All_pair_cost[node.parent.location][node.location]
                 if node.nodebound < self.optimal_solution_cost: 
-                    print(f"add new node:{node.search_set},node_bound:{node.nodebound} ") 
+                    #print(f"add new node:{node.search_set},node_bound:{node.nodebound} ") 
                     
                     heap.heappush(self.search_set,(node.nodebound,node)) 
                 else :
-                    print("----cut------")
+                    #print("----cut------")
+                    pass
             # 當搜索空間被清空,代表這個節點已經可以形成解了, 用回溯parent的地點的方式形成解
             else : # we can figure out a solution 
                 node.evaluate()
@@ -129,5 +130,6 @@ class Branch_Bound:
         
         
 
-bb = Branch_Bound(initial_solution=["A","B","C","D","E","F"],vehicle_location="A") 
+#bb = Branch_Bound(initial_solution=["A","B","C","D","E","F"],vehicle_location="A") 
+bb = Branch_Bound(initial_solution=["A","b","e","2","E","C","d","4","G"],vehicle_location="A") 
 bb.main()
