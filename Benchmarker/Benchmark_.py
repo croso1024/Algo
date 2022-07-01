@@ -15,13 +15,13 @@ import json
 class Benchmarker(nx.Graph): 
     
     vehicle_set = ["ANEV01","ANEV02","ANEV03","ANEV04"]
-    vehicle_pos = {"ANEV01":"1F_start","ANEV02":"1F_start","ANEV03":"1F_start","ANEV04":"B"}
-    
+    #vehicle_pos = {"ANEV01":"1F_start","ANEV02":"1F_start","ANEV03":"1F_start","ANEV04":"B"}
+    vehicle_pos = {"ANEV01":"A","ANEV02":"A","ANEV03":"A","ANEV04":"A"}
     def __init__(self): 
         super().__init__(self) 
     @classmethod 
     def setting(cls,setting_file_path=None): 
-        cls.source_path = "map/Adjency3.json"
+        cls.source_path = "map/Adjency.json"
         #cls.source_path = "map/building_big.json"
     @classmethod  
     def Source_graphLoading(cls): 

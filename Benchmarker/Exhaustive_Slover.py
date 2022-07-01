@@ -4,14 +4,16 @@ import matplotlib.pyplot as plt
 
 class Exhaustiver: 
 
-    def __init__(self , initial_solution ,iteration_num ,vehicle_num):
+    def __init__(self , initial_solution ,iteration_num ,vehicle_num,early_stop):
         self.Optimal_cost = float("inf")
         self.Best_solution =None
         self.initial_solution = initial_solution 
         
         self.iteration_step = iteration_num
-        self.Early_stop = iteration_num//3
-        
+        if early_stop :
+            self.Early_stop = iteration_num//3
+        else:
+            self.Early_stop = iteration_num
         self.Cost_Array = []
         self.vehicle_num = vehicle_num
         
@@ -52,10 +54,6 @@ class Exhaustiver:
                 
                 candidate = self.getSolution()
                 
-                print("ttt1")
-                #cost,solution = Benchmarker._routeCost(candidate)
-                cost,solution= self.cost_function(candidate,self.vehicle_num)
-                print("ttt2")
                 
                 if rev: 
                     l = len(candidate)//2 
@@ -67,7 +65,7 @@ class Exhaustiver:
                     #cost,solution = Benchmarker._routeCost(candidate)
                     cost,solution= self.cost_function(candidate,self.vehicle_num)
                     # TODO reverse
-                print("abs1")
+                
                 if cost < self.Optimal_cost: 
                     self.Optimal_cost = cost 
                     self.Best_solution = solution
@@ -78,7 +76,7 @@ class Exhaustiver:
                     rev_count +=1 
                 
                 self.Cost_Array.append(self.Optimal_cost) 
-                print("abs2")
+                
                 if rev_count >= 8: 
                      rev = not rev 
                      rev_count = 0
@@ -108,7 +106,8 @@ Benchmarker.setting()
 Benchmarker.Source_graphLoading()
 
 #Exahuser = Exhaustiver(initial_solution=["b","D","a","B","E","C","2","5","H","j","h","L","e","T","s","4","K",'l'],iteration_num=1000,vehicle_num=2)
-Exahuser = Exhaustiver(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],iteration_num=400,vehicle_num=2)
+#Exahuser = Exhaustiver(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],iteration_num=400,vehicle_num=2)
+Exahuser = Exhaustiver(initial_solution=["A","B","C","D","E","F"],iteration_num=120,vehicle_num=1,early_stop=False)
 Exahuser.evaluate()
 
 #print(Exahuser.cost_function(['G', 'D', 'A', 'I', 'C', 'L']))

@@ -62,12 +62,12 @@ def create_Map_shape1(size: int or list,out_path,dot_list,peace=1): #--> create 
         file.write(json.dumps(data))
 
 
-#createFromText(6,"longStation.json") 
+createFromText(4,"BBtest.json") 
 
 
-dot1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-dot2 = "abcdefghijklmnopqrstuvwxyz"
-dot3 = "0123456789"
-dot = [dot1,dot2,dot3]
+# dot1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+# dot2 = "abcdefghijklmnopqrstuvwxyz"
+# dot3 = "0123456789"
+# dot = [dot1,dot2,dot3]
 
-create_Map_shape1([20,20,10],out_path="building_big.json",dot_list = dot,peace=3)
+# create_Map_shape1([20,20,10],out_path="building_big.json",dot_list = dot,peace=3)
