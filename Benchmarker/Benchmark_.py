@@ -15,14 +15,15 @@ import json
 class Benchmarker(nx.Graph): 
     
     vehicle_set = ["ANEV01","ANEV02","ANEV03","ANEV04"]
-    #vehicle_pos = {"ANEV01":"1F_start","ANEV02":"1F_start","ANEV03":"1F_start","ANEV04":"B"}
-    vehicle_pos = {"ANEV01":"A","ANEV02":"A","ANEV03":"A","ANEV04":"A"}
+    vehicle_pos = {"ANEV01":"1F_start","ANEV02":"1F_start","ANEV03":"1F_start","ANEV04":"B"}
+    #vehicle_pos = {"ANEV01":"A","ANEV02":"A","ANEV03":"A","ANEV04":"A"}
     def __init__(self): 
         super().__init__(self) 
     @classmethod 
     def setting(cls,setting_file_path=None): 
+        cls.source_path = setting_file_path
         #cls.source_path = "map/Adjency.json"
-        cls.source_path = "map/building_small.json"
+        #cls.source_path = "map/building_small.json"
     @classmethod  
     def Source_graphLoading(cls): 
         #sourceGraph = Benchmarker() 
@@ -109,12 +110,58 @@ class Benchmarker(nx.Graph):
         
         
     @staticmethod
-    def plotting(graph):
+    def plotting(graph,solution_path =None,optimizer:str=None, title:str=None,Cost_log=None,testing_set=None,vehicle_num=1):
         pos_mode = nx.kamada_kawai_layout(graph)
         cost_label = nx.get_edge_attributes(graph,"weight")
-        nx.draw_networkx(graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
-        nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=6)
-        #plt.show()
+        
+        if optimizer and solution_path and Cost_log :  
+            fig = plt.figure(figsize = (10,6), dpi = 100 )
+            # ---------------origin graph
+            plt.subplot(1,4,1),plt.title("Road Map")
+            nx.draw_networkx(graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
+            nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=6)
+            plt.subplot(1,4,2),plt.title("solution path")
+            # --------------- copy a graph to plot solution
+            solution_graph = graph.copy()
+            nx.draw_networkx(solution_graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
+            nx.draw_networkx_edge_labels(solution_graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=6)
+            color_plate = ["red","green","yellow","purple"]
+            node_list_by_vehicle = [list() for i in range(vehicle_num)]
+            
+            vehicle = 0  
+            for i, node in enumerate(solution_path): 
+                if not node == "|": 
+                    node_list_by_vehicle[vehicle].append(node) 
+                else : 
+                    vehicle += 1             
+                    
+            for i,node_list in enumerate(node_list_by_vehicle):  # -- > expected completely parser ["a","b","c"]
+                if not node_list:
+                    continue
+                node_list.insert(0,Benchmarker.vehicle_pos[Benchmarker.vehicle_set[i]])
+                edge_list = [] 
+                for j in range(len(node_list)-1):
+                    edge_list.append(tuple( [node_list[j],node_list[j+1]]) )
+                nx.draw_networkx_nodes(solution_graph, pos= pos_mode , nodelist=node_list,node_size=70,node_color=color_plate[i])
+                nx.draw_networkx_edges(solution_graph,pos = pos_mode,width=2,edge_color=color_plate[i] , 
+                                    edgelist=edge_list)
+                
+                
+            
+            
+            plt.subplot(1,4,4) , plt.title(f"optimization by {optimizer}")
+            plt.plot(range(len(Cost_log)),Cost_log) , plt.ylabel("Cost")  , plt.xlabel("iteration Num")
+            text_ax = plt.subplot(1,4,3) 
+            plt.text(0,0.5,testing_set,transform=text_ax.transAxes)
+            plt.axis("off")
+            fig.tight_layout()
+        
+        else: 
+            plt.title("Loading map")
+            nx.draw_networkx(graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
+            nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=6)
+            
+        plt.show()
 
     @classmethod 
     def inference(cls,map_set,vehicle_set,Algorithm_set): 
@@ -123,4 +170,4 @@ class Benchmarker(nx.Graph):
 if __name__ == "__main__": 
     Benchmarker.setting()
     Benchmarker.Source_graphLoading()
-    Benchmarker.plotting(Benchmarker.SourceGraph)
+    Benchmarker.plotting(Benchmarker.SourceGraph,solution_path=["A","F","C","D"])

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 class Tabu_Search: 
 
     #cost_function = Benchmarker._routeCost
-    tabu_size = 40 
+    tabu_size = 100
     
     move = namedtuple("move",["index1","value1","index2","value2"])
 
@@ -114,20 +114,22 @@ class Tabu_Search:
         self.solution_log.append(self.best_solutionCost)
         self.iteration_num +=1 
 
-    def Optimization(self): 
+    def Optimization(self,plotting=False): 
         for iteration  in range(self.iteration_num):
             self.Iteration()
             
         
         print(f"best solution: {self.best_solution}")
         print(f"best solution cost: {self.best_solutionCost}")
-        plt.plot(range(len(self.solution_log)) , self.solution_log)
-        plt.show()
+        if plotting : 
+            test_setting = f"optimizer: Tabu Search\n\nCost:{self.best_solutionCost}\n\nget solution num:{self.iteration_num}\n\nCriterion:MinSum" 
+            Benchmarker.plotting(Benchmarker.SourceGraph,self.best_solution,"Tabu Search",Cost_log=self.solution_log,testing_set=test_setting,vehicle_num=self.vehicle_num)
+
 if __name__ =="__main__": 
-    Benchmarker.setting() 
+    Benchmarker.setting(setting_file_path="map/Adjency3.json") 
     Benchmarker.Source_graphLoading() 
     #Tabu = Tabu_Search(initial_solution=["B","A","E","G","D","K","I","H","C","L","M","O","Q","R"],iteration_num=10,vehicle_num=4)
-    #Tabu = Tabu_Search(initial_solution=["1F_stage","1F_forest","1F_HenGi","1F_table","1F_gate_2","1F_willy_destroy"],iteration_num=10000,vehicle_num=2)
-    #Tabu = Tabu_Search(initial_solution=["b","D","a","B","E","C","2","5","H","j","h","L","e","T","s","4","K",'l'],iteration_num=2000,vehicle_num=3)
-    Tabu = Tabu_Search(initial_solution=["A","b","e","2","E","C","d","4","G"],iteration_num=30,vehicle_num=1)
-    Tabu.Optimization()
+    Tabu = Tabu_Search(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],iteration_num=500,vehicle_num=1)
+    #Tabu = Tabu_Search(initial_solution=["b","D","a","B","E","C","2","5","H","j","h","L","e","T","s","4","K",'l'],iteration_num=300,vehicle_num=4)
+    #Tabu = Tabu_Search(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],iteration_num=350,vehicle_num=1)
+    Tabu.Optimization(plotting=True)

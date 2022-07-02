@@ -3,9 +3,6 @@ import numpy as np
 import time ,json 
 import heapq as heap
 
-Benchmarker.setting() 
-Benchmarker.Source_graphLoading() 
-#print(Benchmarker.All_pair_cost)
 
 class Node: 
     # location of root is the current location of vehicle 
@@ -36,19 +33,6 @@ class Node:
     def __lt__(self,other):
         return (self.nodebound < other.nodebound) 
     
-        
-            
-    
-class DFS_list: 
-    def __init__(self): 
-        self.subProblem = [] 
-        self.node_forSearch = 0 
-    def _insert(self,node): 
-        self.subProblem.append(node) 
-        self.node_forSearch +=1  
-    
-    def _delete(self,node): 
-        self.subProblem.remove(node) 
 
     
 class Branch_Bound: 
@@ -68,6 +52,8 @@ class Branch_Bound:
         self.current_node.nodebound = 0 # root cost(bound) = 0  
 
         self.find_solution_num = 0
+        
+        self.solution_log = []
     def search_set_NotEmpty(self): 
         return  bool(self.search_set)
     
@@ -99,13 +85,14 @@ class Branch_Bound:
                 solution,cost = node.bulid_solution()
                 # update bound , solution 
                 #print(f"get a solution:{solution}")
-                self.find_solution_num += 1
+                
                 if cost < self.optimal_solution_cost : 
                     self.optimal_solution_cost  = cost 
                     self.optimal_solution = solution 
                 else : 
                     pass 
-
+                self.find_solution_num += 1
+                self.solution_log.append(self.optimal_solution_cost)
             
     def move(self): 
         next_node = heap.heappop(self.search_set)[1]
@@ -113,7 +100,7 @@ class Branch_Bound:
         self.current_node = next_node 
         self.search()
         
-    def main(self): 
+    def main(self,plotting=False): 
         heap.heappush(self.search_set,(self.current_node.nodebound,self.current_node))
         root = heap.heappop(self.search_set)[1]
         self.current_node = root 
@@ -123,13 +110,17 @@ class Branch_Bound:
             #print(self.search_set)
             self.move()
         
-        print(self.find_solution_num)
-        print(self.optimal_solution)
-        print(self.optimal_solution_cost)
+        print(f"Total find solution : {self.find_solution_num}")
+        print(f"Optimal solution: {self.optimal_solution}")
+        print(f"Optimal solution cost:{self.optimal_solution_cost}")
+        if plotting: 
+            test_setting = f"optimizer: Branch&Bound\n\nCost:{self.optimal_solution_cost}\n\nget solution num:{self.find_solution_num}\n\nCriterion:MinSum" 
+            Benchmarker.plotting(Benchmarker.SourceGraph,self.optimal_solution,"Branch&Bound",Cost_log=self.solution_log,testing_set=test_setting)
         
         
-        
-
+Benchmarker.setting(setting_file_path="map/Adjency3.json")
+Benchmarker.Source_graphLoading() 
 #bb = Branch_Bound(initial_solution=["A","B","C","D","E","F"],vehicle_location="A") 
-bb = Branch_Bound(initial_solution=["A","b","e","2","E","C","d","4","G"],vehicle_location="A") 
-bb.main()
+#bb = Branch_Bound(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],vehicle_location="A") 
+bb = Branch_Bound(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],vehicle_location="1F_start")
+bb.main(plotting=True)
