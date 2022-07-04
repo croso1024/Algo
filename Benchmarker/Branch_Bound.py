@@ -117,10 +117,10 @@ class Branch_Bound:
             test_setting = f"optimizer: Branch&Bound\n\nCost:{self.optimal_solution_cost}\n\nget solution num:{self.find_solution_num}\n\nCriterion:MinSum" 
             Benchmarker.plotting(Benchmarker.SourceGraph,self.optimal_solution,"Branch&Bound",Cost_log=self.solution_log,testing_set=test_setting)
         
-        
-Benchmarker.setting(setting_file_path="map/building_small.json")
-Benchmarker.Source_graphLoading() 
-#bb = Branch_Bound(initial_solution=["A","B","C","D","E","F"],vehicle_location="A") 
-bb = Branch_Bound(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],vehicle_location="A") 
-#bb = Branch_Bound(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],vehicle_location="1F_start")
-bb.main(plotting=True)
+if __name__ == "__main__": 
+    Benchmarker.setting(setting_file_path="map/building_small.json")
+    Benchmarker.Source_graphLoading() 
+    #bb = Branch_Bound(initial_solution=["A","B","C","D","E","F"],vehicle_location="A") 
+    bb = Branch_Bound(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],vehicle_location="A") 
+    #bb = Branch_Bound(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],vehicle_location="1F_start")
+    bb.main(plotting=True)

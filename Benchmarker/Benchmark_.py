@@ -46,7 +46,7 @@ class Benchmarker(nx.Graph):
         cls.SourceGraph = sourceGraph 
         cls.All_pair_cost = dict(nx.all_pairs_dijkstra_path_length(cls.SourceGraph))
         print("Source graph Loading complete")
-        #print(cls.All_pair_cost)
+        print(cls.All_pair_cost)
     
     #excepted request is list including dispatch msg {"account":,location.. ,"uuid"}
     #nodes --> pure "location" , anything attribute likes uuid will be append on request 
@@ -115,7 +115,7 @@ class Benchmarker(nx.Graph):
         cost_label = nx.get_edge_attributes(graph,"weight")
         
         if optimizer and solution_path and Cost_log :  
-            fig = plt.figure(figsize = (10,6), dpi = 100 )
+            fig = plt.figure(figsize = (12,4), dpi = 100 )
             # ---------------origin graph
             plt.subplot(1,4,1),plt.title("Road Map")
             nx.draw_networkx(graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
@@ -157,10 +157,11 @@ class Benchmarker(nx.Graph):
             fig.tight_layout()
         
         else: 
+            print("done1")
             plt.title("Loading map")
             nx.draw_networkx(graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
             nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=6)
-            
+            print("done2")
         plt.show()
 
     @classmethod 
@@ -168,6 +169,6 @@ class Benchmarker(nx.Graph):
         pass
 
 if __name__ == "__main__": 
-    Benchmarker.setting()
+    Benchmarker.setting("map/Relax_small.json")
     Benchmarker.Source_graphLoading()
-    Benchmarker.plotting(Benchmarker.SourceGraph,solution_path=["A","F","C","D"])
+    Benchmarker.plotting(Benchmarker.SourceGraph)

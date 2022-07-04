@@ -2,7 +2,7 @@ import numpy  as np
 import json
 
 
-
+############# create a map from map , format by willy 
 def createFromJSON(input_path,out_path):  
     #with open("map/expo_park.json","r") as file: 
     with open(input_path,"r") as file : 
@@ -17,20 +17,47 @@ def createFromJSON(input_path,out_path):
     with open(out_path,"w") as file:
         data = {"station":location,"adjencyMatrix":adj}    
         file.write(json.dumps(data))
-        
-def createFromText(size: int , out_path): 
-    dot  = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+
+def hollowMap(adj_matrix,probability) ->list : 
+    for i in range(len(adj_matrix))  :    # 0-> size 
+        for j in range(len(adj_matrix)) :    # 0 -> size 
+            radint = np.random.uniform() 
+            if radint < probability : 
+                adj_matrix[i][j] = 0  
+                adj_matrix[j][i] = 0   
+            else : 
+                pass 
+    return adj_matrix
+
+####### create a random generate map from only text 
+def createFromText(size: int , out_path , probability=None): 
+    dot  = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
     location ,length= dot[:size] , len(dot[:size])
     print(location)
     matrix = np.random.randint(low=0,high = 10 , size= (3,length))
     adj = np.dot(matrix.transpose(),matrix)
+    if probability : 
+        adj = hollowMap(adj,probability=probability)
+    
     adj = adj.tolist() 
     with open(out_path,"w") as file:
         data = {"station":location , "adjencyMatrix":adj}
         file.write(json.dumps(data))
-    
-def create_Map_shape1(size: int or list,out_path,dot_list,peace=1): #--> create map like SSB
 
+
+
+
+
+
+
+####### create a ssb-like map from text only 
+
+def create_Map_shape1(size: int or list,out_path,peace=1): #--> create map like SSB
+    dot1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    dot2 = "abcdefghijklmnopqrstuvwxyz"
+    dot3 = "0123456789"
+    dot_list = [dot1,dot2,dot3]
     if size == int:  
         size =[size] 
         assert peace ==1 , "slice error"    
@@ -62,7 +89,7 @@ def create_Map_shape1(size: int or list,out_path,dot_list,peace=1): #--> create 
         file.write(json.dumps(data))
 
 
-createFromText(4,"BBtest.json") 
+createFromText(50,"Relax_big.json",probability=0.6) 
 
 
 # dot1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -70,4 +97,4 @@ createFromText(4,"BBtest.json")
 # dot3 = "0123456789"
 # dot = [dot1,dot2,dot3]
 
-# create_Map_shape1([20,20,10],out_path="building_big.json",dot_list = dot,peace=3)
+# create_Map_shape1([20,20,10],out_path="building_big.json",peace=3)
