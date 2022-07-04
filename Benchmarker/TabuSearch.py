@@ -128,7 +128,7 @@ class Tabu_Search:
 if __name__ =="__main__": 
     Benchmarker.setting(setting_file_path="map/Relax_Big.json") 
     Benchmarker.Source_graphLoading() 
-    Tabu = Tabu_Search(initial_solution=["B","A","E","G","D","K","I","H","C","L","M","O","Q","R","a","b","c","d","e","f","g","h","i","j","k"],iteration_num=10,vehicle_num=3)
+    Tabu = Tabu_Search(initial_solution=["A","B","D","E","a","b","c","Y","Z","x","Z"],iteration_num=10,vehicle_num=1)
     #Tabu = Tabu_Search(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],iteration_num=500,vehicle_num=1)
     #Tabu = Tabu_Search(initial_solution=["b","D","a","B","E","C","2","5","H","j","h","L","e","T","s","4","K",'l'],iteration_num=300,vehicle_num=4)
     #Tabu = Tabu_Search(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],iteration_num=350,vehicle_num=1)

@@ -42,7 +42,7 @@ class Branch_Bound:
         self.search_set = []  # --> use as minheap for node bound
         
         self.optimal_solution = initial_solution # use initial or None as optimal for start
-        #self.optimal_solution_cost = np.inf
+        #self.optimal_solution_cost = 823
         self.optimal_solution_cost = Benchmarker._routeCost(initial_solution,vehicle_num=1)[0]
         
         initial_solution.pop(0)# fix the effect of call _routeCost ( add a station of vehicle pos )
@@ -118,9 +118,9 @@ class Branch_Bound:
             Benchmarker.plotting(Benchmarker.SourceGraph,self.optimal_solution,"Branch&Bound",Cost_log=self.solution_log,testing_set=test_setting)
         
 if __name__ == "__main__": 
-    Benchmarker.setting(setting_file_path="map/building_small.json")
+    Benchmarker.setting(setting_file_path="map/Relax_small.json")
     Benchmarker.Source_graphLoading() 
-    #bb = Branch_Bound(initial_solution=["A","B","C","D","E","F"],vehicle_location="A") 
-    bb = Branch_Bound(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],vehicle_location="A") 
+    bb = Branch_Bound(initial_solution=["A","B","D","E","F","J","H","K","L","N","I"],vehicle_location="A") 
+    #bb = Branch_Bound(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],vehicle_location="A") 
     #bb = Branch_Bound(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],vehicle_location="1F_start")
     bb.main(plotting=True)

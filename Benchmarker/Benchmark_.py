@@ -46,7 +46,7 @@ class Benchmarker(nx.Graph):
         cls.SourceGraph = sourceGraph 
         cls.All_pair_cost = dict(nx.all_pairs_dijkstra_path_length(cls.SourceGraph))
         print("Source graph Loading complete")
-        print(cls.All_pair_cost)
+        #print(cls.All_pair_cost)
     
     #excepted request is list including dispatch msg {"account":,location.. ,"uuid"}
     #nodes --> pure "location" , anything attribute likes uuid will be append on request 
