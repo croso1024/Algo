@@ -35,7 +35,7 @@ class Node:
     
 
     
-class Branch_Bound: 
+class BranchBound: 
     
     def __init__(self,initial_solution,vehicle_location): 
         print(initial_solution)
@@ -104,23 +104,24 @@ class Branch_Bound:
         heap.heappush(self.search_set,(self.current_node.nodebound,self.current_node))
         root = heap.heappop(self.search_set)[1]
         self.current_node = root 
+
+        t_start = time.time()
         self.search()
-        
         while self.search_set_NotEmpty() : 
             #print(self.search_set)
             self.move()
-        
+        CostTime = time.time()-t_start
         print(f"Total find solution : {self.find_solution_num}")
         print(f"Optimal solution: {self.optimal_solution}")
         print(f"Optimal solution cost:{self.optimal_solution_cost}")
         if plotting: 
-            test_setting = f"optimizer: Branch&Bound\n\nCost:{self.optimal_solution_cost}\n\nget solution num:{self.find_solution_num}\n\nCriterion:MinSum" 
+            test_setting = f"optimizer: Branch&Bound\n\nCost:{self.optimal_solution_cost}\n\nget solution num:{self.find_solution_num}\n\nCost time: {CostTime}\n\nCriterion:MinSum" 
             Benchmarker.plotting(Benchmarker.SourceGraph,self.optimal_solution,"Branch&Bound",Cost_log=self.solution_log,testing_set=test_setting)
         
 if __name__ == "__main__": 
     Benchmarker.setting(setting_file_path="map/Relax_small.json")
     Benchmarker.Source_graphLoading() 
-    bb = Branch_Bound(initial_solution=["A","B","D","E","F","J","H","K","L","N","I"],vehicle_location="A") 
-    #bb = Branch_Bound(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],vehicle_location="A") 
-    #bb = Branch_Bound(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],vehicle_location="1F_start")
+    bb = BranchBound(initial_solution=["A","B","D","E","F","J","H","K","L","N","I"],vehicle_location="A") 
+    #bb = BranchBound(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],vehicle_location="A") 
+    #bb = BranchBound(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],vehicle_location="1F_start")
     bb.main(plotting=True)

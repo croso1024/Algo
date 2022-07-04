@@ -110,14 +110,15 @@ class Benchmarker(nx.Graph):
         
         
     @staticmethod
-    def plotting(graph,solution_path =None,optimizer:str=None, title:str=None,Cost_log=None,testing_set=None,vehicle_num=1):
+    def plotting(graph,solution_path =None,optimizer:str=None, title:str=None,Cost_log=None,testing_set=None,vehicle_num=1,map_name=None):
         pos_mode = nx.kamada_kawai_layout(graph)
         cost_label = nx.get_edge_attributes(graph,"weight")
         
         if optimizer and solution_path and Cost_log :  
-            fig = plt.figure(figsize = (12,4), dpi = 100 )
+            fig = plt.figure(figsize = (14,4), dpi = 100 )
             # ---------------origin graph
-            plt.subplot(1,4,1),plt.title("Road Map")
+            
+            plt.subplot(1,4,1),plt.title("Map")
             nx.draw_networkx(graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
             nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=6)
             plt.subplot(1,4,2),plt.title("solution path")
@@ -152,16 +153,16 @@ class Benchmarker(nx.Graph):
             plt.subplot(1,4,4) , plt.title(f"optimization by {optimizer}")
             plt.plot(range(len(Cost_log)),Cost_log) , plt.ylabel("Cost")  , plt.xlabel("iteration Num")
             text_ax = plt.subplot(1,4,3) 
-            plt.text(0,0.5,testing_set,transform=text_ax.transAxes)
+            plt.text(0,0.2,testing_set,transform=text_ax.transAxes)
             plt.axis("off")
             fig.tight_layout()
         
         else: 
-            print("done1")
+           
             plt.title("Loading map")
             nx.draw_networkx(graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
             nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=6)
-            print("done2")
+           
         plt.show()
 
     @classmethod 
@@ -169,6 +170,6 @@ class Benchmarker(nx.Graph):
         pass
 
 if __name__ == "__main__": 
-    Benchmarker.setting("map/Relax_small.json")
+    Benchmarker.setting("map/building_big.json")
     Benchmarker.Source_graphLoading()
     Benchmarker.plotting(Benchmarker.SourceGraph)

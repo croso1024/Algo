@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 class Tabu_Search: 
 
     #cost_function = Benchmarker._routeCost
-    tabu_size = 100
+    tabu_size = 20
     
     move = namedtuple("move",["index1","value1","index2","value2"])
 
@@ -115,14 +115,17 @@ class Tabu_Search:
         self.iteration_num +=1 
 
     def Optimization(self,plotting=False): 
+        t_start = time.time() 
         for iteration  in range(self.iteration_num):
             self.Iteration()
             
         
         print(f"best solution: {self.best_solution}")
         print(f"best solution cost: {self.best_solutionCost}")
+        CostTime = time.time() - t_start
+
         if plotting : 
-            test_setting = f"optimizer: Tabu Search\n\nCost:{self.best_solutionCost}\n\nget solution num:{self.iteration_num}\n\nCriterion:MinSum" 
+            test_setting = f"optimizer: Tabu Search\n\nCost:{self.best_solutionCost}\n\nget solution num:{self.iteration_num}\n\nCost time: {CostTime}\n\nCriterion:MinSum" 
             Benchmarker.plotting(Benchmarker.SourceGraph,self.best_solution,"Tabu Search",Cost_log=self.solution_log,testing_set=test_setting,vehicle_num=self.vehicle_num)
 
 if __name__ =="__main__": 
