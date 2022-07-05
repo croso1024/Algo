@@ -113,11 +113,11 @@ class Exhaustiver:
         
 if __name__ == "__main__": 
         
-    Benchmarker.setting(setting_file_path="map/Adjency3.json")
+    Benchmarker.setting(setting_file_path="map/building_small.json")
     Benchmarker.Source_graphLoading()
 
-    #Exahuser = Exhaustiver(initial_solution=["b","D","a","B","E","C","2","5","H","j","h","L","e","T","s","4","K",'l'],iteration_num=1000,vehicle_num=4,early_stop=False)
-    Exahuser = Exhaustiver(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],iteration_num=1400,vehicle_num=1,early_stop=False)
+    Exahuser = Exhaustiver(initial_solution=["B","J","E","H","P","M","G","O","C","A"],iteration_num=3628800,vehicle_num=1,early_stop=False)
+    #Exahuser = Exhaustiver(initial_solution=["f","G","S","m","q","s","K","T","P","A","B","D","E","a","b","c","Y","Z","x","I"],iteration_num=3000,vehicle_num=4,early_stop=False)
     #Exahuser = Exhaustiver(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],iteration_num=39916800,vehicle_num=1,early_stop=False)
     Exahuser.evaluate(plotting=True)
 

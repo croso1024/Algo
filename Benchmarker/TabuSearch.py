@@ -112,7 +112,7 @@ class Tabu_Search:
         if len(self.tabu) > self.tabu_size: 
             self.tabu.pop() 
         self.solution_log.append(self.best_solutionCost)
-        self.iteration_num +=1 
+        #self.iteration_num +=1 
 
     def Optimization(self,plotting=False): 
         t_start = time.time() 
@@ -125,14 +125,13 @@ class Tabu_Search:
         CostTime = time.time() - t_start
 
         if plotting : 
-            test_setting = f"optimizer: Tabu Search\n\nCost:{self.best_solutionCost}\n\nget solution num:{self.iteration_num}\n\nCost time: {CostTime}\n\nCriterion:MinSum" 
+            test_setting = f"optimizer: Tabu Search\n\nCost:{self.best_solutionCost}\n\nIteration num:{self.iteration_num}\n\nCost time: {CostTime}\n\nCriterion:MinSum" 
             Benchmarker.plotting(Benchmarker.SourceGraph,self.best_solution,"Tabu Search",Cost_log=self.solution_log,testing_set=test_setting,vehicle_num=self.vehicle_num)
 
 if __name__ =="__main__": 
-    Benchmarker.setting(setting_file_path="map/Relax_Big.json") 
+    Benchmarker.setting(setting_file_path="map/Relax_small.json") 
     Benchmarker.Source_graphLoading() 
-    Tabu = Tabu_Search(initial_solution=["A","B","D","E","a","b","c","Y","Z","x","Z"],iteration_num=10,vehicle_num=1)
-    #Tabu = Tabu_Search(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],iteration_num=500,vehicle_num=1)
-    #Tabu = Tabu_Search(initial_solution=["b","D","a","B","E","C","2","5","H","j","h","L","e","T","s","4","K",'l'],iteration_num=300,vehicle_num=4)
-    #Tabu = Tabu_Search(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],iteration_num=350,vehicle_num=1)
+    #Tabu = Tabu_Search(initial_solution=["A","B","D","E","a","b","c","Y","Z","x","I","f","G","S","m","q","s","K","T","P"],iteration_num=30,vehicle_num=1)
+    Tabu = Tabu_Search(initial_solution=["B","J","E","H","P","M","G","O","C","A"],iteration_num=30,vehicle_num=1)
+    #Tabu = Tabu_Search(initial_solution=["B","C","E","O","P","M","G","H","J","A"],iteration_num=30,vehicle_num=1)
     Tabu.Optimization(plotting=True)
