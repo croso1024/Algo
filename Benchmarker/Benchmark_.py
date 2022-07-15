@@ -45,22 +45,28 @@ class Benchmarker(nx.Graph):
                     sourceGraph.add_edge(node,cls.station_list[j],weight=cost)
         cls.SourceGraph = sourceGraph 
         cls.All_pair_cost = dict(nx.all_pairs_dijkstra_path_length(cls.SourceGraph))
+        cls.All_pair_path = dict(nx.all_pairs_dijkstra_path(cls.SourceGraph))
         print("Source graph Loading complete")
-        #print(cls.All_pair_cost)
-    
+        print(cls.All_pair_cost)
+        print("all pair path ")
+        print(cls.All_pair_path)
     #excepted request is list including dispatch msg {"account":,location.. ,"uuid"}
     #nodes --> pure "location" , anything attribute likes uuid will be append on request 
     @classmethod 
     def _routeCost(cls,nodes: list,vehicle_num=1): 
         total_cost = 0  
         #nodes = cls.Solution_parser(vehicle_num=1,nodes=nodes)[0]
-        nodes.insert(0,cls.vehicle_pos[cls.vehicle_set[0]])
+        # 如果vehicle_num >1 在parser時就insert過了
+        if vehicle_num ==1:
+            nodes.insert(0,cls.vehicle_pos[cls.vehicle_set[0]])
         
         for step in range( len(nodes)-1 ): 
             curNode = nodes[step]
             nextNode = nodes[step+1]
             #print(cls.All_pair_cost[curNode][nextNode])
             total_cost += cls.All_pair_cost[curNode][nextNode]  
+        
+        
         #print("The solution total cost is {}".format(total_cost))
         #print("Solution:{}".format(nodes))
         return total_cost,nodes
@@ -98,7 +104,7 @@ class Benchmarker(nx.Graph):
     
         for n, nth_solution in enumerate(solution_set) : 
             if nth_solution : # this solution have waypoint ( len(solution) > 0 )
-                cost_set[n], ret  = cls._routeCost(nth_solution)
+                cost_set[n], ret  = cls._routeCost(nth_solution,vehicle_num)
             else : 
                 cost_set[n] = 0  
         #print(cost_set)
@@ -170,6 +176,6 @@ class Benchmarker(nx.Graph):
         pass
 
 if __name__ == "__main__": 
-    Benchmarker.setting("map/building_big.json")
+    Benchmarker.setting("map/Adjency.json")
     Benchmarker.Source_graphLoading()
     Benchmarker.plotting(Benchmarker.SourceGraph)

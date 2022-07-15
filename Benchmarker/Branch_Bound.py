@@ -123,7 +123,7 @@ class BranchBound:
 if __name__ == "__main__": 
     Benchmarker.setting(setting_file_path="map/building_small.json")
     Benchmarker.Source_graphLoading() 
-    bb = BranchBound(initial_solution=["B","J","E","H","P","F","C","G",""],vehicle_location="A") 
+    bb = BranchBound(initial_solution=["B","J","E","H","P","F","C","G"],vehicle_location="A") 
     #bb = BranchBound(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],vehicle_location="A") 
     #bb = BranchBound(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],vehicle_location="1F_start")
     bb.main(plotting=True)

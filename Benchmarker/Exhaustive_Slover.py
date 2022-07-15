@@ -116,7 +116,7 @@ if __name__ == "__main__":
     Benchmarker.setting(setting_file_path="map/building_small.json")
     Benchmarker.Source_graphLoading()
 
-    Exahuser = Exhaustiver(initial_solution=["B","J","E","H","P","M","G","O","C","A"],iteration_num=3628800,vehicle_num=1,early_stop=False)
+    Exahuser = Exhaustiver(initial_solution=["B","J","E","H","P","M","G","O","C","A"],iteration_num=36800,vehicle_num=1,early_stop=False)
     #Exahuser = Exhaustiver(initial_solution=["f","G","S","m","q","s","K","T","P","A","B","D","E","a","b","c","Y","Z","x","I"],iteration_num=3000,vehicle_num=4,early_stop=False)
     #Exahuser = Exhaustiver(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],iteration_num=39916800,vehicle_num=1,early_stop=False)
     Exahuser.evaluate(plotting=True)

@@ -86,7 +86,8 @@ class Tabu_Search:
 
             if neighborhood_cost < best_solutionCost: 
                 best_solutionCost = neighborhood_cost 
-                best_solution = neighborhood.copy()   
+                #best_solution = neighborhood.copy()    #0715 發現說neighborhood在call lossfunction時會被insert位置,應該由current solution來當解
+                best_solution = self.current_solution.copy()
                 best_move = move 
                 
             if not is_tabu and neighborhood_cost < nonTabu_best_solutionCost : 
