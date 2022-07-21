@@ -46,10 +46,10 @@ class Benchmarker(nx.Graph):
         cls.SourceGraph = sourceGraph 
         cls.All_pair_cost = dict(nx.all_pairs_dijkstra_path_length(cls.SourceGraph))
         cls.All_pair_path = dict(nx.all_pairs_dijkstra_path(cls.SourceGraph))
-        print("Source graph Loading complete")
-        print(cls.All_pair_cost)
-        print("all pair path ")
-        print(cls.All_pair_path)
+        #print("Source graph Loading complete")
+        #print(cls.All_pair_cost)
+        #print("all pair path ")
+        #print(cls.All_pair_path)
     #excepted request is list including dispatch msg {"account":,location.. ,"uuid"}
     #nodes --> pure "location" , anything attribute likes uuid will be append on request 
     @classmethod 
@@ -112,7 +112,7 @@ class Benchmarker(nx.Graph):
         Cost = sum(cost_set) 
         #criterion 2 , min Max , minimize the most cost vehicle in set     
         #Cost = max(cost_set)
-        return Cost , nodes
+        return Cost , solution_set#nodes
         
         
     @staticmethod
@@ -176,6 +176,6 @@ class Benchmarker(nx.Graph):
         pass
 
 if __name__ == "__main__": 
-    Benchmarker.setting("map/Adjency.json")
+    Benchmarker.setting("map/Adjency2.json")
     Benchmarker.Source_graphLoading()
     Benchmarker.plotting(Benchmarker.SourceGraph)
