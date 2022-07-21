@@ -1,4 +1,5 @@
 {
+    "Depot":"A",
     "station": ["A","B","C","D","E","F","G"],
     "adjencyMatrix":
     [

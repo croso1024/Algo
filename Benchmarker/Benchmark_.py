@@ -14,26 +14,35 @@ import json
 
 class Benchmarker(nx.Graph): 
     
-    vehicle_set = ["ANEV01","ANEV02","ANEV03","ANEV04"]
+    #vehicle_set = ["ANEV01","ANEV02","ANEV03","ANEV04"]
     #vehicle_pos = {"ANEV01":"1F_start","ANEV02":"1F_start","ANEV03":"1F_start","ANEV04":"B"}
-    vehicle_pos = {"ANEV01":"A","ANEV02":"A","ANEV03":"A","ANEV04":"A"}
+    #vehicle_pos = {"ANEV01":"A","ANEV02":"A","ANEV03":"A","ANEV04":"A"}
+    vehicle_set = []
+    vehicle_pos = {}
     def __init__(self): 
         super().__init__(self) 
     @classmethod 
     def setting(cls,setting_file_path=None): 
-        cls.source_path = setting_file_path
-        #cls.source_path = "map/Adjency.json"
-        #cls.source_path = "map/building_small.json"
+        cls.source_path =setting_file_path
+        cls.Total_vehicleNum =12 
+      
+        #cls.source_path = setting_file_path
+
     @classmethod  
     def Source_graphLoading(cls): 
         #sourceGraph = Benchmarker() 
         sourceGraph = cls() 
         with open(cls.source_path,"r") as file:
             graph = json.load(file)
+            cls.Depot = graph["Depot"]
             cls.station_list = graph["station"]
             cls.dimention = len(cls.station_list)
             cls.adjencyMatrix = graph["adjencyMatrix"]
             assert cls.dimention == len(cls.adjencyMatrix[0]) , "Adjency matrix error"
+            for i in range(cls.Total_vehicleNum): 
+                car = "AMR0"+str(i+1) 
+                cls.vehicle_set.append(car)
+                cls.vehicle_pos.update({car:cls.Depot})
         # loading nodes from sourcefile  
         for node in cls.station_list: 
             sourceGraph.add_node(node) 
@@ -132,7 +141,8 @@ class Benchmarker(nx.Graph):
             solution_graph = graph.copy()
             nx.draw_networkx(solution_graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
             nx.draw_networkx_edge_labels(solution_graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=6)
-            color_plate = ["red","green","yellow","purple"]
+            color_plate = ["red","green","yellow","purple","lime","pink","gold","darkorange","violet"]
+       
             node_list_by_vehicle = [list() for i in range(vehicle_num)]
             
             vehicle = 0  
