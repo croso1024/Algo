@@ -9,7 +9,9 @@ def createFromJSON(input_path,out_path):
         data = json.load(file)
     location = list(data["goals"].keys())
     print(location)
-    matrix = np.random.randint(low=0,high=3,size=(2,len(location)))
+    #matrix = np.random.randint(low=0,high=1,size=(2,len(location)))
+    # 0812 
+    matrix = np.zeros((2,len(location)), dtype=int)
     adj = np.dot(matrix.transpose(),matrix)
     print(matrix)
     print(adj)
@@ -71,7 +73,7 @@ def create_Map_shape1(size: int or list,out_path,peace=1): #--> create map like 
         location += dot[:size[i]]
         length =  len(dot[:size[i]])
         print(location,length)
-        matrix = np.random.randint(low =1 ,high = 3,size = (3,length))
+        matrix = np.random.randint(low =0 ,high = 0,size = (3,length))
         adj = np.dot(matrix.transpose(),matrix)
         print(adj.shape)
         adj_list[i] = adj 
@@ -89,8 +91,8 @@ def create_Map_shape1(size: int or list,out_path,peace=1): #--> create map like 
         file.write(json.dumps(data))
 
 
-createFromText(50,"Relax_big.json",probability=0.6) 
-
+#createFromText(50,"Relax_big.json",probability=0.6) 
+createFromJSON("YaTai3.json","map/YaTai3_adjency.json")
 
 # dot1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 # dot2 = "abcdefghijklmnopqrstuvwxyz"

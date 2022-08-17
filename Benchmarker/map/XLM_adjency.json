@@ -1,0 +1,1 @@
+{"station": ["1F_kitchen", "1F_glassdoor", "1F_pingfung", "1F_roomfront", "1F_smalldish", "1F_table2", "1F_toilet"], "adjencyMatrix": [[5, 0, 2, 6, 4, 6, 4], [0, 0, 0, 0, 0, 0, 0], [2, 0, 1, 2, 1, 2, 1], [6, 0, 2, 8, 6, 8, 6], [4, 0, 1, 6, 5, 6, 5], [6, 0, 2, 8, 6, 8, 6], [4, 0, 1, 6, 5, 6, 5]]}

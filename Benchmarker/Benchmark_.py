@@ -176,8 +176,8 @@ class Benchmarker(nx.Graph):
         else: 
            
             plt.title("Loading map")
-            nx.draw_networkx(graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=5)
-            nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=6)
+            nx.draw_networkx(graph,pos =pos_mode ,node_size=50,with_labels=True,font_size=15)
+            nx.draw_networkx_edge_labels(graph,pos=pos_mode,edge_labels=cost_label,font_color="red",font_size=16)
            
         plt.show()
 
@@ -185,7 +185,7 @@ class Benchmarker(nx.Graph):
     def inference(cls,map_set,vehicle_set,Algorithm_set): 
         pass
 
-if __name__ == "__main__": 
-    Benchmarker.setting("map/Adjency2.json")
+if __name__ == "__main__":
+    Benchmarker.setting("map/YaTai3_adjency.json")
     Benchmarker.Source_graphLoading()
     Benchmarker.plotting(Benchmarker.SourceGraph)

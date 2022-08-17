@@ -1,0 +1,17 @@
+{
+    "Depot":"1F_Restaurant",
+    "station": [
+    "1F_Restaurant",
+    "1F_TzuChi", 
+    "1F_NTU_table",
+    "1F_NTHU_table", 
+    "1F_China_Steel",
+    "1F_Green_Factory"], 
+    "adjencyMatrix":
+     [
+    [0, 1, 0, 0, 0, 2], 
+    [1, 0, 1, 0, 0, 0], 
+    [0, 1, 0, 1, 0, 0], 
+    [0, 0, 1, 0, 1, 0], 
+    [0, 0, 0, 1, 0, 1], 
+    [2, 0, 0, 0, 1, 0]]}
