@@ -32,6 +32,7 @@ class Benchmarker(nx.Graph):
     def Source_graphLoading(cls): 
         #sourceGraph = Benchmarker() 
         sourceGraph = cls() 
+        print(cls.source_path)
         with open(cls.source_path,"r") as file:
             graph = json.load(file)
             cls.Depot = graph["Depot"]
@@ -186,6 +187,7 @@ class Benchmarker(nx.Graph):
         pass
 
 if __name__ == "__main__":
+    print("dodo")
     Benchmarker.setting("map/YaTai3_adjency.json")
     Benchmarker.Source_graphLoading()
     Benchmarker.plotting(Benchmarker.SourceGraph)
