@@ -12,13 +12,14 @@ class Tabu_Search:
     
     move = namedtuple("move",["index1","value1","index2","value2"])
 
-    def __init__(self,initial_solution,iteration_num,vehicle_num=1):
+    def __init__(self,initial_solution,iteration_num,vehicle_num=1,randomInit=False):
         
         self.best_solutionCost = np.inf 
         self.best_solution = None 
         self.tabu = []  
         
-        self.current_solution = initial_solution  # --> represent the current position (solution) 
+        self.current_solution = list(np.random.permutation(initial_solution))  if randomInit else initial_solution
+        # --> represent the current position (solution) 
         self.iteration_num = iteration_num
         self.vehicle_num = vehicle_num
         
@@ -133,7 +134,7 @@ if __name__ =="__main__":
     Benchmarker.setting(setting_file_path="map/Relax_small.json") 
     Benchmarker.Source_graphLoading() 
     #Tabu = Tabu_Search(initial_solution=["B","D","E","a","b","c","Y","Z","x","I","f","G","S","m","q","s","K","T","P"],iteration_num=20,vehicle_num=8)
-    #Tabu = Tabu_Search(initial_solution=["B","A","E","H","P","G","M","O","C","J"],iteration_num=60,vehicle_num=3)
-    #Tabu = Tabu_Search(initial_solution=["B","C","E","O","P","M","G","H","J","A"],iteration_num=30,vehicle_num=1)
-    Tabu = Tabu_Search(initial_solution=list(np.random.permutation(Benchmarker.station_list)),iteration_num=260,vehicle_num=1)
+    #Tabu = Tabu_Search(initial_solution=["B","C","E","O","P","M","G","H","J","A"],iteration_num=160,vehicle_num=3)
+    #Tabu = Tabu_Search(initial_solution=["B","C","E","O","P","M","G","H","J","A"],iteration_num=50,vehicle_num=1,randomInit=True)
+    Tabu = Tabu_Search(initial_solution=list(np.random.permutation(Benchmarker.station_list)),iteration_num=260,vehicle_num=3)
     Tabu.Optimization(plotting=True)

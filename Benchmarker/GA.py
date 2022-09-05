@@ -1,116 +1,127 @@
+
 import pygad  , json 
 from Benchmark_ import Benchmarker
 import networkx as nx 
 import numpy as np
+import time 
 
-
-# def fitness_function(solution,solution_index): 
-#     global encodeTable , CostMap   
-#     #print(f"solution before parse {solution}")
-#     solution = [encodeTable[i] for i in solution]
-#     #print(f"solution after parse {solution}")
-#     total_cost = 0
-#     for step in range(len(solution)  -1 ): 
-#         curNode = solution[step]
-#         nextNode = solution[step+1]
-#         total_cost += CostMap[curNode][nextNode]
-
-#     return -1*total_cost 
-
-
+"""
+develop log:目前在考慮要如何插入｜　可能要在每次送fitness的時候都跑一次mutil_vehicle_adjust但耗時 
+另外multi_vehicle_adjust需要vehicle_num , 需要想一下在不傳入self的情況下如何使用  
+或是想辦法使fitness fun可以用self
+"""
 
 class Genetic_algorithms : 
+  
+    def __init__(self,initial_solution,vehicle_num=1) : 
     
-    def __init__(self,setting_file_path=None) : 
-        self.SourceGraph = nx.Graph() 
-        self.map_file = setting_file_path 
-        self.graphLoading()
-        
-    def graphLoading(self):  
-        
-        with open(self.map_file , "r") as file : 
-            graph = json.load(file) 
-            self.station_list = graph["station"] 
-            self.dimention = len(self.station_list)
-            self.adjencyMatrix  = graph["adjencyMatrix"] 
-            self.encodeTable = {i+1:node for i,node in  enumerate(self.station_list)}
+        self.initial_solution = initial_solution 
+        if vehicle_num >1 :
+            self.MultiVehicle_adjust()
             
-            
-            for node in self.station_list: 
-                self.SourceGraph.add_node(node) 
-            for i , node in enumerate(self.station_list): 
-                for j in range(i+1 , self.dimention) : 
-                    cost = self.adjencyMatrix[i][j] 
-                    if cost :  self.SourceGraph.add_edge(node,self.station_list[j],weight=cost) 
-        self.All_pair_cost = dict(nx.all_pairs_dijkstra_path_length(self.SourceGraph)) 
-        self.All_pair_path = dict(nx.all_pairs_dijkstra_path(self.SourceGraph)) 
-        print(self.SourceGraph.nodes())
-        print(self.SourceGraph.edges())
-    
+        self.dimention = len(initial_solution) 
+        self.gene_space = [i for i in range(self.dimention)]
+        
+        self.population_list = [] 
+        self.solution_per_population = 16
+        for i in range(self.solution_per_population):
+            randomPermu = list(np.random.permutation(self.gene_space))
+            self.population_list.append(randomPermu)
+        
+        
+        
+        
+        self.num_generation = 250 
+        self.num_parents_mating = 8
+        
+        self.num_genes = self.dimention
+        self.parent_selection_type = "sss"  
+        self.init_low , init_high = 1, self.dimention
+        self.crossover_type = "two_points" 
+        self.mutation_type ="adaptive"
+        self.mutation_percent = [25,4] 
+        self.keep_parents = 4
+        
 
         
+        if vehicle_num ==1:  
+            self.fitness_Func = Genetic_algorithms.fitness_function
+        else: 
+            print("########## USE multi vehicle ###############")
+            self.fitness_Func = Genetic_algorithms.fitness_function_Multi
+        
+        
+    def createGA_instnace(self): 
+        self.GA = pygad.GA(
+            gene_type=int,
+            num_generations=self.num_generation,
+            num_parents_mating=self.num_parents_mating, 
+            #fitness_func=Genetic_algorithms.fitness_function,
+            #fitness_func=self.fitness_Func,
+            fitness_func=self.fitness_function2(),
+            sol_per_pop=self.solution_per_population, 
+            initial_population=self.population_list,
+            num_genes=self.num_genes,
+            gene_space = self.gene_space,
+            parent_selection_type=self.parent_selection_type,
+            keep_parents=self.keep_parents,
+            crossover_type=self.crossover_type,
+            mutation_type=self.mutation_type,
+            mutation_percent_genes=self.mutation_percent,
+            allow_duplicate_genes=False,
+
+        )
+    @staticmethod 
+    def encode(solution):   
+        return [Benchmarker.encodeTalbe[node] for node in solution]
+    
+    
     @staticmethod
     def fitness_function(solution,solution_index): 
-        global encodeTable , CostMap   
-        #print(f"solution before parse {solution}")
-        solution = [encodeTable[i] for i in solution]
-        #print(f"solution after parse {solution}")
-        total_cost = 0
-        for step in range(len(solution)  -1 ): 
-            curNode = solution[step]
-            nextNode = solution[step+1]
-            total_cost += CostMap[curNode][nextNode]
-
-        return -1*total_cost 
-
+        
+        solution = [Benchmarker.encodeTalbe[node] for node in solution]
     
-    def Parameter(self): 
+        return -1 * Benchmarker._routeCost(solution)[0]
+    
+    def fitness_function2(self) : 
         
-        num_generation = 250 
-        num_parents_mating = 8
-        solution_per_population = 16
-        num_genes = self.dimention
+        def fitness_fun(solution,solution_index): 
+            solution = [Benchmarker.encodeTalbe[node] for node in solution]
+    
+            return -1 * Benchmarker._routeCost(solution)[0]
+        print(self.dimention)
+        return fitness_fun
+    
+    @staticmethod 
+    def fitness_function_Multi(solution,solution_inde): 
+        solution = [Benchmarker.encodeTalbe[node] for node in solution]
         
-        parent_selection_type = "sss"  
-        init_low , init_high = 1, self.dimention
-        crossover_type = "two_points" 
-        mutation_type ="adaptive"
-        mutation_percent = [10,20] 
-        keep_parents = 8
-        
-        gene_space = [i for i in range(1,self.dimention+1)]
-        
-        population_list = [] 
-        
-        for i in range(solution_per_population):
-            randomPermu = list(np.random.permutation(gene_space))
-            population_list.append(randomPermu)
-        
-        self.GA_instance = pygad.GA(
-            num_generations=num_generation,
-            num_parents_mating=num_parents_mating, 
-            fitness_func=Genetic_algorithms.fitness_function,
-            sol_per_pop=solution_per_population, 
-            initial_population=population_list,
-            num_genes=num_genes,
-            gene_space = gene_space,
-            parent_selection_type=parent_selection_type,
-            keep_parents=keep_parents,
-            crossover_type=crossover_type,
-            mutation_type=mutation_type,
-            mutation_percent_genes=mutation_percent,
-            allow_duplicate_genes=False,
-        ) 
-        print("done")
+        return -1 * Benchmarker.MultiVehicle_Cost(solution,vehicle_num=2)[0]
+    
+    def MultiVehicle_adjust(self,solution):  
+        solution = [Benchmarker.encodeTalbe[node] for node in solution] 
+        step = len(solution) // self.vehicle_num 
+        for i in range(self.vehicle_num-1): 
+            solution.insert((i+1)*step , "|") 
+        self.initial_solution = solution
+    
+    
     def Optimization(self) : 
-        self.Parameter()   
-        self.GA_instance.run() 
-        solution, solution_fitness, solution_idx = self.GA_instance.best_solution()
-        print("best_solution: {solution}".format(solution =[encodeTable[i] for i in solution]))
+        self.createGA_instnace()   
+        start = time.time()
+        self.GA.run() 
+        print(time.time()-start)
+        solution, solution_fitness, solution_idx = self.GA.best_solution()
+        print("best_solution: {solution}".format(solution =[Benchmarker.encodeTalbe[i] for i in solution]))
         print("best_solution fitness: {solution_fit}".format(solution_fit =-1*solution_fitness))
-        
-        
-GA =  Genetic_algorithms(setting_file_path="map/Relax_small.json")
-encodeTable = GA.encodeTable
-CostMap = GA.All_pair_cost
-GA.Optimization()
+        self.GA.plot_fitness()
+
+
+if __name__ =="__main__": 
+    Benchmarker.setting("map/Relax_small.json")
+    Benchmarker.Source_graphLoading()
+    #GA =  Genetic_algorithms(initial_solution=["B","C","E","O","P","M","G","H","J","A"])
+    GA = Genetic_algorithms(initial_solution=Benchmarker.station_list,vehicle_num=1)
+    #encodeTable = GA.encodeTable
+    #CostMap = GA.All_pair_cost
+    GA.Optimization()

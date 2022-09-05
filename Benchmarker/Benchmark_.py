@@ -44,6 +44,10 @@ class Benchmarker(nx.Graph):
                 car = "AMR0"+str(i+1) 
                 cls.vehicle_set.append(car)
                 cls.vehicle_pos.update({car:cls.Depot})
+            # 0904 set for GA
+            cls.encodeTalbe = {i:node for i,node in enumerate(cls.station_list)}    
+                
+            
         # loading nodes from sourcefile  
         for node in cls.station_list: 
             sourceGraph.add_node(node) 
@@ -81,8 +85,22 @@ class Benchmarker(nx.Graph):
         #print("Solution:{}".format(nodes))
         return total_cost,nodes
 
-
+    @classmethod
+    def _routeCost_encode(cls,nodes:list , vehicle_num=1) : 
+        
                 
+        
+        nodes = [cls.encodeTalbe[node] for node in nodes]
+      
+        total_cost = 0 
+        if vehicle_num ==1 : 
+            nodes.insert(0,cls.vehicle_pos[cls.vehicle_set[0]]) 
+        for step in range( len(nodes) - 1): 
+            curNode = nodes[step]
+            nextNode = nodes[step+1]
+            total_cost += cls.All_pair_cost[curNode][nextNode]
+        
+        return total_cost
     @classmethod
     def Solution_parser(cls,vehicle_num,nodes,backToHome=False) : 
         sub_set = [list() for i in range(vehicle_num)]
@@ -109,6 +127,7 @@ class Benchmarker(nx.Graph):
 
     @classmethod 
     def MultiVehicle_Cost(cls,nodes:list,vehicle_num): 
+        
         solution_set  = cls.Solution_parser(vehicle_num , nodes)
         cost_set = [0 for i in range(vehicle_num)]
     
@@ -125,6 +144,9 @@ class Benchmarker(nx.Graph):
         return Cost , solution_set#nodes
         
         
+    
+    
+    
     @staticmethod
     def plotting(graph,solution_path =None,optimizer:str=None, title:str=None,Cost_log=None,testing_set=None,vehicle_num=1,map_name=None):
         pos_mode = nx.kamada_kawai_layout(graph)
