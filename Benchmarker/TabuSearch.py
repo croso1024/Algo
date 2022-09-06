@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 class Tabu_Search: 
 
     #cost_function = Benchmarker._routeCost
-    tabu_size =80
+    tabu_size =20
     
     move = namedtuple("move",["index1","value1","index2","value2"])
 
@@ -124,17 +124,24 @@ class Tabu_Search:
         
         print(f"best solution: {self.best_solution}")
         print(f"best solution cost: {self.best_solutionCost}")
-        CostTime = time.time() - t_start
+        self.CostTime = time.time() - t_start
+        print(self.CostTime)
 
         if plotting : 
-            test_setting = f"optimizer: Tabu Search\n\nCost:{self.best_solutionCost}\n\nIteration num:{self.iteration_num}\n\nCost time: {CostTime}\n\nCriterion:MinSum" 
+            test_setting = f"optimizer: Tabu Search\n\nCost:{self.best_solutionCost}\n\nIteration num:{self.iteration_num}\n\nCost time: {self.CostTime}\n\nCriterion:MinSum" 
             Benchmarker.plotting(Benchmarker.SourceGraph,self.best_solution,"Tabu Search",Cost_log=self.solution_log,testing_set=test_setting,vehicle_num=self.vehicle_num)
 
 if __name__ =="__main__": 
-    Benchmarker.setting(setting_file_path="map/Relax_small.json") 
+    Benchmarker.setting(setting_file_path="map/building_big.json") 
     Benchmarker.Source_graphLoading() 
     #Tabu = Tabu_Search(initial_solution=["B","D","E","a","b","c","Y","Z","x","I","f","G","S","m","q","s","K","T","P"],iteration_num=20,vehicle_num=8)
     #Tabu = Tabu_Search(initial_solution=["B","C","E","O","P","M","G","H","J","A"],iteration_num=160,vehicle_num=3)
-    #Tabu = Tabu_Search(initial_solution=["B","C","E","O","P","M","G","H","J","A"],iteration_num=50,vehicle_num=1,randomInit=True)
-    Tabu = Tabu_Search(initial_solution=list(np.random.permutation(Benchmarker.station_list)),iteration_num=260,vehicle_num=3)
+    #Tabu = Tabu_Search(initial_solution=Benchmarker.station_list,iteration_num=50,vehicle_num=1,randomInit=False)
+    Tabu = Tabu_Search(initial_solution=list(np.random.permutation(Benchmarker.station_list)),iteration_num=30,vehicle_num=3)
     Tabu.Optimization(plotting=True)
+    
+    
+    for i in range(10): 
+        print(f"--------iter {i}-----")
+        Tabu = Tabu_Search(initial_solution=list(np.random.permutation(Benchmarker.station_list)),iteration_num=30,vehicle_num=3)
+        Tabu.Optimization(plotting=0)

@@ -1,4 +1,4 @@
-{"Depot":"A","station": "ABCDEFGHIJKLMNOPQRST", 
+{"Depot":"A","station": ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T"], 
     "adjencyMatrix":
 [
 [3, 5, 5, 4, 5, 5, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

@@ -47,23 +47,25 @@ class Genetic_Algorithms:
             keep_parents=self.keep_parents_afterIteration,
             
             ###### plotting ######
-            save_best_solutions=True ,
+            #save_best_solutions=True ,
+            ###### life cycle ######
+            on_fitness=self.log_fitness()
         )
 
     @classmethod
     def Parameter(cls):
 
-        cls.num_generation = 500
-        cls.num_paraents_mating = 16
-        cls.parent_selection_type = "tournament"
+        cls.num_generation = 650
+        cls.num_paraents_mating = 8
+        cls.parent_selection_type = "rank"
         
         cls.crossover_type = "two_points"
         cls.mutation_type = "random"
-        cls.population_size = 32
+        cls.population_size = 16
         if cls.mutation_type == "adaptive":
             cls.mutation_percent = [25, 10]
         else:
-            cls.mutation_percent = 20
+            cls.mutation_percent = 5
 
         cls.keep_parents_afterIteration = -1
 
@@ -94,26 +96,48 @@ class Genetic_Algorithms:
 
         return fitness if self.vehicle_num == 1 else fitness_multi
 
-    def Optimization(self):
+    def log_fitness(self):
+        self.avg_log= [] 
+        self.best_log = []
+        
+        def log(ga_instance,pop_fit): 
+            self.best_log.append(-1*pop_fit.max())
+            self.avg_log.append(-1*pop_fit.mean())
+        return log
+    
+    def Optimization(self , plotting=False):
         start = time.time()
         self.GA.run()
-        print(time.time()-start)
-        solution, solution_fitness, solution_idx = self.GA.best_solution()
+        end = time.time()
+        self.solution, self.solution_fitness, solution_idx = self.GA.best_solution()
+        self.solution = self.encode(self.solution) 
+        self.solution_fitness = -self.solution_fitness
         print("best_solution: {solution}".format(
-            solution=self.encode(solution) ) )
+            solution=self.solution ) )
         print("best_solution fitness: {solution_fit}".format(
-            solution_fit=-1*solution_fitness))
-        self.GA.plot_fitness()
+            solution_fit=-self.solution_fitness))
+        #self.GA.plot_fitness()
+        self.CostTime = end-start
+        
+        print(self.CostTime)
+        if plotting: 
+            test_setting = f"optimizer: Genetic\n\nCost:{self.solution_fitness}\n\nIteration+num:{self.num_generation}\n\nCost time:{self.CostTime}\n\nCriterion:MinSum"
+            Benchmarker.plotting(Benchmarker.SourceGraph,self.encode(self.solution),"GeneticAlgorithms",Cost_log=self.best_log,testing_set=test_setting,vehicle_num=self.vehicle_num)
    
         
 
 
 if __name__ == "__main__":
-    Benchmarker.setting("map/Relax_small.json")
+    Benchmarker.setting("map/building_big.json")
     Benchmarker.Source_graphLoading()
 
     #GA = Genetic_Algorithms.Create_GA_Instance(initial_solution=["B","C","E","O","P","M","G","H","J","A"],vehicle_num=3)
     GA = Genetic_Algorithms.Create_GA_Instance(    initial_solution=Benchmarker.station_list, vehicle_num=3)
-    
+   
 
-    GA.Optimization()
+    GA.Optimization(plotting=0)
+   
+    for i in range(10): 
+       print(f"--------- iter {i} ------")
+       GA = Genetic_Algorithms.Create_GA_Instance(    initial_solution=Benchmarker.station_list, vehicle_num=3)
+       GA.Optimization(plotting=0)

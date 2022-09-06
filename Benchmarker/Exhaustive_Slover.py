@@ -2,6 +2,7 @@ from Benchmark_ import Benchmarker
 from itertools import permutations,count 
 import matplotlib.pyplot as plt 
 import time
+import numpy as np
 class Exhaustiver: 
 
     def __init__(self , initial_solution ,iteration_num ,vehicle_num,early_stop):
@@ -93,6 +94,7 @@ class Exhaustiver:
             print(f"total step: {step_count}")
             CostTime = time.time() - t_start
             self.CostTime = CostTime
+            print(self.CostTime)
             if plotting:
                 self.plotting()
             
@@ -113,7 +115,7 @@ class Exhaustiver:
         
 if __name__ == "__main__": 
         
-    Benchmarker.setting(setting_file_path="map/Relax_big.json")
+    Benchmarker.setting(setting_file_path="map/building_big.json")
     Benchmarker.Source_graphLoading()
 
     Exahuser = Exhaustiver(initial_solution=["B","J","E","H","P","M","G","O","C","A"],iteration_num=36800,vehicle_num=8,early_stop=False)
@@ -122,3 +124,7 @@ if __name__ == "__main__":
     Exahuser.evaluate(plotting=True)
 
     #print(Exahuser.cost_function(['G', 'D', 'A', 'I', 'C', 'L']))
+    for i in range(10): 
+       print(f"--------- iter {i} ------")
+       Exahuser = Exhaustiver(initial_solution=list(np.random.permutation(Benchmarker.station_list)),iteration_num=36800,vehicle_num=3,early_stop=False)
+       Exahuser.evaluate(plotting=0)
