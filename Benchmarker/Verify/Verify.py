@@ -16,7 +16,7 @@ Map_set_small =  ["../map/Relax_small.json","../map/Tight_small.json","../map/bu
 Map_set_big=[ "../map/Relax_big.json" , "../map/Tight_big.json","../map/building_big.json"] 
 
 # for map in Map_set_small :
-Benchmarker.setting("map/building_big.json") 
+Benchmarker.setting("map/Relax_big.json") 
 Benchmarker.Source_graphLoading()
 
 #     initial_solution = list(np.random.permutation(Benchmarker.station_list))
@@ -31,11 +31,11 @@ GA_time = []
 TS_log = []
 TS_time = []
 
-Verify_times = 30
+Verify_times = 15
 
 for i in range(Verify_times): 
     print(f"Tabu--------iter {i}-----")
-    Tabu = Tabu_Search(initial_solution=list(np.random.permutation(Benchmarker.station_list)),iteration_num=50,vehicle_num=4)
+    Tabu = Tabu_Search(initial_solution=list(np.random.permutation(Benchmarker.station_list)),iteration_num=60,vehicle_num=4)
     Tabu.Optimization(plotting=0)
     TS_log.append(Tabu.best_solutionCost)
     TS_time.append(Tabu.CostTime) 
@@ -62,7 +62,7 @@ for i in range(Verify_times):
 ########## Plot ##############
 
 fig , axis1 = plt.subplots() 
-plt.title("Cost&Time -- 50 instance SSB big ")  
+plt.title("Cost&Time -- 50 instance Relax big ")  
 plt.xlabel("Sample") 
 axis2 = axis1.twinx()
     

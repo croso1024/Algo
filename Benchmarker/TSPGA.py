@@ -56,16 +56,16 @@ class Genetic_Algorithms:
     def Parameter(cls):
 
         cls.num_generation = 650
-        cls.num_paraents_mating = 8
+        cls.num_paraents_mating = 12
         cls.parent_selection_type = "rank"
         
-        cls.crossover_type = "two_points"
+        cls.crossover_type = "uniform"
         cls.mutation_type = "random"
-        cls.population_size = 16
+        cls.population_size = 24
         if cls.mutation_type == "adaptive":
             cls.mutation_percent = [25, 10]
         else:
-            cls.mutation_percent = 5
+            cls.mutation_percent = 3
 
         cls.keep_parents_afterIteration = -1
 
