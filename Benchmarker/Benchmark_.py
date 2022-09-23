@@ -51,12 +51,19 @@ class Benchmarker(nx.Graph):
         # loading nodes from sourcefile  
         for node in cls.station_list: 
             sourceGraph.add_node(node) 
+        # loading self-loop edge , weight = 0 
+        # for node in cls.station_list: 
+        #     sourceGraph.add_edge(node,node,weight=0)
+        
         # loading edges for every
         for i, node in enumerate(cls.station_list): 
             for j in range(i+1,cls.dimention): 
                 cost = cls.adjencyMatrix[i][j]
                 if cost: 
                     sourceGraph.add_edge(node,cls.station_list[j],weight=cost)
+        
+        
+        
         cls.SourceGraph = sourceGraph 
         cls.All_pair_cost = dict(nx.all_pairs_dijkstra_path_length(cls.SourceGraph))
         cls.All_pair_path = dict(nx.all_pairs_dijkstra_path(cls.SourceGraph))
@@ -68,6 +75,7 @@ class Benchmarker(nx.Graph):
     #nodes --> pure "location" , anything attribute likes uuid will be append on request 
     @classmethod 
     def _routeCost(cls,nodes: list,vehicle_num=1): 
+       
         total_cost = 0  
         #nodes = cls.Solution_parser(vehicle_num=1,nodes=nodes)[0]
         # 如果vehicle_num >1 在parser時就insert過了
@@ -77,6 +85,7 @@ class Benchmarker(nx.Graph):
         for step in range( len(nodes)-1 ): 
             curNode = nodes[step]
             nextNode = nodes[step+1]
+     
             #print(cls.All_pair_cost[curNode][nextNode])
             total_cost += cls.All_pair_cost[curNode][nextNode]  
         
@@ -85,22 +94,34 @@ class Benchmarker(nx.Graph):
         #print("Solution:{}".format(nodes))
         return total_cost,nodes
 
+
+    ######################################
+    # 0917 , simplify datagenerate , cost compute by origin graph !!! 
     @classmethod
-    def _routeCost_encode(cls,nodes:list , vehicle_num=1) : 
+    def _routeCost_DataGen(cls,nodes:list , vehicle_num=1,depot_start=False , cycle=True) : 
         
-                
         
-        nodes = [cls.encodeTalbe[node] for node in nodes]
-      
         total_cost = 0 
-        if vehicle_num ==1 : 
-            nodes.insert(0,cls.vehicle_pos[cls.vehicle_set[0]]) 
+        if vehicle_num ==1 and depot_start:
+            nodes.insert(0,cls.vehicle_pos[cls.vehicle_set[0]])
         for step in range( len(nodes) - 1): 
-            curNode = nodes[step]
-            nextNode = nodes[step+1]
+            curNode = str(nodes[step])
+            nextNode = str(nodes[step+1])
+            
+            #for non Encode map 
             total_cost += cls.All_pair_cost[curNode][nextNode]
+            
+            # for Encode map 
+            #total_cost += cls.SourceGraph[curNode][nextNode]["weight"]
+       
+        if cycle : 
+            total_cost += cls.All_pair_cost[nodes[-1]][nodes[0]]
         
-        return total_cost
+        # print(total_cost,nodes)
+        
+        return total_cost,nodes
+    
+    ####################################
     @classmethod
     def Solution_parser(cls,vehicle_num,nodes,backToHome=False) : 
         sub_set = [list() for i in range(vehicle_num)]
@@ -178,7 +199,10 @@ class Benchmarker(nx.Graph):
             for i,node_list in enumerate(node_list_by_vehicle):  # -- > expected completely parser ["a","b","c"]
                 if not node_list:
                     continue
-                node_list.insert(0,Benchmarker.vehicle_pos[Benchmarker.vehicle_set[i]])
+                
+                # 0920 : comment this line for dataGenerate , plot tour without start point (depot)
+                #node_list.insert(0,Benchmarker.vehicle_pos[Benchmarker.vehicle_set[i]])
+                
                 edge_list = [] 
                 for j in range(len(node_list)-1):
                     edge_list.append(tuple( [node_list[j],node_list[j+1]]) )

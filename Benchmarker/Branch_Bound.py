@@ -12,6 +12,9 @@ class Node:
         self.search_set = search_set
         self.location = location
         
+        
+        
+        
     def bulid_solution(self): 
         solution = [self.location] 
         #cost = self.parent.nodebound 
@@ -20,12 +23,19 @@ class Node:
         
         while probe :  
             solution.append(probe.location)
-            probe = probe.parent 
+            probe = probe.parent  
         solution.reverse() 
         return solution ,cost 
     
     def evaluate(self): 
-        self.nodebound = self.parent.nodebound + Benchmarker.All_pair_cost[self.parent.location][self.location]
+        if self.parent.location : 
+            # 0917 simplify datageneration , use origin graph
+            #self.nodebound = self.parent.nodebound + Benchmarker.All_pair_cost[self.parent.location][self.location]
+            self.nodebound = self.parent.nodebound + Benchmarker.SourceGraph[self.parent.location][self.location]["weight"]
+        else: 
+            self.nodebound = self.parent.nodebound
+            
+            
     def __eq__(self,other):
         return (self.nodebound == other.nodebound) 
     def __gt__(self,other): 
@@ -37,7 +47,7 @@ class Node:
     
 class BranchBound: 
     
-    def __init__(self,initial_solution,vehicle_location): 
+    def __init__(self,initial_solution,vehicle_location,GenerateMode=False): 
         print(initial_solution)
         self.search_set = []  # --> use as minheap for node bound
         
@@ -46,7 +56,13 @@ class BranchBound:
         #self.optimal_solution_cost = 90
 
         ##### follow 2 line must enable simutanious , _routeCost may modify the initial solution
-        self.optimal_solution_cost = Benchmarker._routeCost(initial_solution,vehicle_num=1)[0]
+        #self.optimal_solution_cost = Benchmarker._routeCost(initial_solution,vehicle_num=1)[0]
+        
+        self.costFunction = Benchmarker._routeCost if not GenerateMode else Benchmarker._routeCost_DataGen
+        
+        # 0914 move to main() , for add GenerateMode() 
+        self.optimal_solution_cost = self.costFunction(initial_solution,vehicle_num=1)[0]
+        
         initial_solution.pop(0)# fix the effect of call _routeCost ( add a station of vehicle pos )
         
         self.current_node = Node(search_set=initial_solution,location=vehicle_location)
@@ -56,6 +72,8 @@ class BranchBound:
         self.find_solution_num = 0
         
         self.solution_log = []
+
+
     def search_set_NotEmpty(self): 
         return  bool(self.search_set)
     
@@ -106,6 +124,8 @@ class BranchBound:
         self.search()
         
     def main(self,plotting=False): 
+        
+        
         heap.heappush(self.search_set,(self.current_node.nodebound,self.current_node))
         root = heap.heappop(self.search_set)[1]
         self.current_node = root 
@@ -116,17 +136,22 @@ class BranchBound:
             #print(self.search_set)
             self.move()
         CostTime = time.time()-t_start
-        print(f"Total find solution : {self.find_solution_num}")
-        print(f"Optimal solution: {self.optimal_solution}")
+        # print(f"Total find solution : {self.find_solution_num}")
+        # print(f"Optimal solution: {self.optimal_solution}")
         print(f"Optimal solution cost:{self.optimal_solution_cost}")
         if plotting: 
             test_setting = f"optimizer: Branch&Bound\n\nCost:{self.optimal_solution_cost}\n\nget solution num:{self.find_solution_num}\n\nCost time: {CostTime}\n\nCriterion:MinSum" 
             Benchmarker.plotting(Benchmarker.SourceGraph,self.optimal_solution,"Branch&Bound",Cost_log=self.solution_log,testing_set=test_setting)
-        
+        return self.optimal_solution
+    
 if __name__ == "__main__": 
-    Benchmarker.setting(setting_file_path="map/building_small.json")
+    Benchmarker.setting(setting_file_path="map/building_big.json")
     Benchmarker.Source_graphLoading() 
-    bb = BranchBound(initial_solution=["B","J","E","H","P","M","G","O","C"],vehicle_location="A") 
+    
+    bb = BranchBound(initial_solution=["B","J","E","H","P","M","G","O","C"],vehicle_location=None , GenerateMode=False) 
+    # bb.GenerateMode()
     #bb = BranchBound(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],vehicle_location="A") 
     #bb = BranchBound(initial_solution=["1F_stage","1F_gate_2","1F_HenGi","1F_table","1F_forest","1F_willy_destroy"],vehicle_location="1F_start")
     bb.main(plotting=True)
+    
+    

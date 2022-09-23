@@ -141,7 +141,7 @@ if __name__ =="__main__":
     Tabu.Optimization(plotting=True)
     
     
-    for i in range(10): 
-        print(f"--------iter {i}-----")
-        Tabu = Tabu_Search(initial_solution=list(np.random.permutation(Benchmarker.station_list)),iteration_num=30,vehicle_num=3)
-        Tabu.Optimization(plotting=0)
+    # for i in range(10): 
+    #     print(f"--------iter {i}-----")
+    #     Tabu = Tabu_Search(initial_solution=list(np.random.permutation(Benchmarker.station_list)),iteration_num=30,vehicle_num=3)
+    #     Tabu.Optimization(plotting=0)
