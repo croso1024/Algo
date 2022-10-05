@@ -135,8 +135,8 @@ if __name__ == "__main__":
     Benchmarker.Source_graphLoading()
 
 
-    Exahuser = Exhaustiver(initial_solution=["3","2","4","6","9","12","11","15"],iteration_num=362880,vehicle_num=1,early_stop=False,GenerateMode=True)
-
+    #Exahuser = Exhaustiver(initial_solution=["3","2","4","6","9","12","11","15"],iteration_num=362880,vehicle_num=1,early_stop=False,GenerateMode=True)
+    Exahuser = Exhaustiver(initial_solution=["0","2","5","3","1","4"] ,iteration_num=720 ,vehicle_num=1,early_stop=False,GenerateMode=True)
     #Exahuser = Exhaustiver(initial_solution=["B","J","E","H","P","M","G","O","C"],iteration_num=40000,vehicle_num=1,early_stop=False)
     #Exahuser = Exhaustiver(initial_solution=["f","G","S","m","q","s","K","T","P","A","B","D","E","a","b","c","Y","Z","x","I"],iteration_num=3000,vehicle_num=4,early_stop=False)
     #Exahuser = Exhaustiver(initial_solution=["A","1","c","b","e","2","E","C","d","4","G"],iteration_num=39916800,vehicle_num=1,early_stop=False)

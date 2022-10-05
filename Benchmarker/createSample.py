@@ -99,8 +99,8 @@ def createEncodeMap(size: int , out_path , probability=None):
     #dot  = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
     location ,length= dot[:size] , len(dot[:size])
     print(location)
-    #matrix = np.random.randint(low=0,high = 1 , size= (3,length))
-    matrix = np.random.rand(3,length)
+    matrix = np.random.randint(low=1,high = 3 , size= (3,length))
+    #matrix = np.random.rand(3,length) *3
     matrix.astype(dtype=np.float16)
     adj = np.dot(matrix.transpose(),matrix)
     if probability : 
@@ -113,7 +113,7 @@ def createEncodeMap(size: int , out_path , probability=None):
     
     adj = adj.tolist() 
     with open(out_path,"w") as file:
-        data = {"station":location , "adjencyMatrix":adj}
+        data = {"station":location , "adjencyMatrix":adj,"Depot":"0"}
         file.write(json.dumps(data))
 
 
