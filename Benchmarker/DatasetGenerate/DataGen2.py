@@ -1,5 +1,17 @@
 import sys
+"""
 
+    Data generator 2 ,  subjected the all pair dijkstra on sub-adjmatrix to build node feature 
+    
+    total: 
+        node_feature : b*n*n  , all pair dijkstra  adjency matrix 
+        edge_index : b*e , all edge in the subgraph , bi-edge , undirection 
+        edge_weight : b*e , use the "shortest path" as the weight of edge 
+        y :          b*n*n ,   the label route represent by the node-feature likes shape 
+        y_CE :       b*n  , represent the route by "seqence" of classes   , for crossentropy loss 
+        opt :        b , the baseline algorithms cost for same problem       
+  
+"""
 Path = "/home/croso1024/python_code/Algorithms/Benchmarker"
 
 store_path1 = "/home/croso1024/python_code/GNN/Dataset/"
