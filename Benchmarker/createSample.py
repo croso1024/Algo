@@ -99,8 +99,8 @@ def createEncodeMap(size: int , out_path , probability=None):
     #dot  = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
     location ,length= dot[:size] , len(dot[:size])
     print(location)
-    matrix = np.random.randint(low=1,high = 3 , size= (3,length))
-    #matrix = np.random.rand(4,length) *3
+    #matrix = np.random.randint(low=1,high = 3 , size= (3,length))
+    matrix = np.random.rand(4,length) *1.44
     
     matrix.astype(dtype=np.float16)
     adj = np.dot(matrix.transpose(),matrix)
@@ -121,7 +121,7 @@ def createEncodeMap(size: int , out_path , probability=None):
 #createFromText(50,"Relax_big.json",probability=0.6) 
 #createFromJSON("YaTai3.json","map/YaTai3_adjency.json")
 
-createEncodeMap(50,"DatasetGenerate/trainMap.json")  
+# createEncodeMap(50,"DatasetGenerate/trainMap_square.json")  
 
 # dot1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 # dot2 = "abcdefghijklmnopqrstuvwxyz"

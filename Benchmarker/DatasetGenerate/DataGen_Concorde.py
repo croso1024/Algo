@@ -17,153 +17,77 @@
 
 
 Path = "/home/croso1024/python_code/Algorithms/Benchmarker"
-
-store_path1 = "/home/croso1024/python_code/GNN/Dataset/"
-store_path2 = "/home/croso1024/python_code/Algorithms/Benchmarker/DatasetGenerate/"
-store_path3 = "/home/kangli/Ming_ws/GNN/Dataset/"
-
 import sys 
 if not Path in sys.path : sys.path.append(Path)
 
 import torch
 from Benchmark_ import Benchmarker 
-from Branch_Bound  import BranchBound 
-from Exhaustive_Slover import Exhaustiver
-import json 
 import numpy as np
 import networkx as nx
-import time 
-import matplotlib.pyplot as plt 
 from tqdm import tqdm 
-
 from concorde.tsp import TSPSolver 
+from multiprocessing import Process  
+import argparse  
+from DataGen_utils import * 
 
 
-#### Loading map ####
-Benchmarker.setting("DatasetGenerate/trainMap.json")
-Benchmarker.Source_graphLoading() 
-SourceGraph = Benchmarker.SourceGraph
-Stations = Benchmarker.station_list  
-All_pair_cost = Benchmarker.All_pair_cost 
 
-# add self-loop to graph
-for node in Stations: 
-    SourceGraph.add_edge(node,node,weight=0)
-
-
-#print("done")
-#print(All_pair_cost)
-
-def Sampler(size=5) : # --> generate the random list  ! just for single vehicle 
-    out =  list(np.random.choice(Stations , size , replace=False) )
-    #print(f"Debug Sampler:{out}")
+if __name__ == "__main__": 
     
-    return out
+    argument = argparse.ArgumentParser()
     
+    argument.add_argument("--m_path",type=str , default=None)
+    argument.add_argument("--s_path",type=str , default=None) 
+    argument.add_argument("--node_dim",type=int , default=20) 
+    argument.add_argument("--num_samples",type=int , default=10)
+    argument.add_argument("--num_workers",type=int , default=1)
+    argument.add_argument("--save",action="store_true",default=False)
+    arg = argument.parse_args()
+    assert arg.s_path[-1] == "/" , "Store path lost the '/'   " 
+    #### Loading map ####
+    Benchmarker.setting(arg.m_path)
+    Benchmarker.Source_graphLoading() 
+    SourceGraph = Benchmarker.SourceGraph
+    Stations = Benchmarker.station_list  
+    All_pair_cost = Benchmarker.All_pair_cost 
+    print(type(SourceGraph))
+    print(type(All_pair_cost))
 
-
-
-def GraphFeature(seq) : # --> output the node-feature matrix ( dijksta )
+    # add self-loop to graph
+    for node in Stations: 
+        SourceGraph.add_edge(node,node,weight=0)
     
-    subGraph = nx.subgraph(SourceGraph,seq) 
-    sub_dijkstra = dict(nx.all_pairs_dijkstra_path_length(subGraph)) 
-    
-    ###### Node Feature extract ###############################################
-    
-    seq_sort = sorted(seq , key = lambda x : int(x)) 
-    #print(f"Debug : seq-sort : {seq_sort}")
-
-    reindex = {seq[i] : seq_sort.index(seq[i]) for i in range(len(seq))}    
-    
-    #print(f"Debug : re-index:{reindex}")
-    #print(f"Debug : sub dijkstra :{sub_dijkstra}")
-
-    Dijkstra_nodeFeature = np.zeros( (len(seq),len(seq) ) , dtype = np.float32)
-    
-    
-    # --> src & dst node is "str" node and not yet normalized 
-    # --> need use reindex 
-    for src_node in sub_dijkstra :
+    process_pool = []
+    for i in range(arg.num_workers): 
         
-        for dst_node in sub_dijkstra[src_node]: 
-
-            Dijkstra_nodeFeature[ reindex[src_node] ][  reindex[dst_node] ]  = sub_dijkstra[src_node][dst_node] 
-    
-    
-    #print(f"Debug : Dijkstra node feature : \n {Dijkstra_nodeFeature}")
-
-
-    ############ Edge Featrue extract ###########
-    edgeIndex = list() 
-    edgeWeight = list() 
-    
-    for u,v in subGraph.edges: 
+        parameter = (
+            SourceGraph.copy(),
+            Stations.copy() , 
+            All_pair_cost.copy() , 
+            arg.node_dim, 
+            arg.num_samples//arg.num_workers, 
+            arg.save, 
+            # arg._num_workers , 
+            i , 
+            arg.s_path
+        )
         
-        edgeWeight.append(sub_dijkstra[u][v])
-        edgeWeight.append(sub_dijkstra[v][u])
-        edgeIndex.append([reindex[u] , reindex[v]])
-        edgeIndex.append([reindex[v] , reindex[u]])
-    
-    return Dijkstra_nodeFeature , edgeIndex , edgeWeight 
-    
-
-def concorde_Solver(dist_matrix , vehicle_num=1) -> list:     #--> output opt , y_CE
-
-    Solver = TSPSolver.from_data(dist_matrix=dist_matrix.copy())
-    
-    output = Solver.solve() 
-    
-    #print(f"Debug output-tour : {output.tour}")
-
-    #print(f"Debug output cost : {output.optimal_value}")
-    return output.tour , int(output.optimal_value/100)
-
-
-def main(sampleSize = 20 ,dataSize = 1000 , save= True ,savePath =store_path1 ): 
-    
-    Stations_length = len(Stations) - 1
-    inputNodefeature = []  # --> Dijksta matrix  
-    inputEdgeindex = []  
-    inputEdgeweight = [] 
-    y_CE = []
-    opt = []
-
-    for i in tqdm(range(dataSize)): 
+        p = Process(target=Generator , args=parameter) 
         
-        Input = Sampler(sampleSize)
+        process_pool.append(p)
+
+    
+    
+    
+    for i , process in enumerate(process_pool):
+        process.start() 
+        print(f"process {i} start !")
         
-        node_feature , edge_index , edge_weight = GraphFeature(Input) 
-        y_ce , optCost = concorde_Solver(node_feature)
-        # print(f"node feature : \n{node_feature}" )
-        # print(f"edge index {edge_index}" )
-        # print(f"edge weight {edge_weight}" )
-        # print(f"y_ce :{y_ce}")
-        # print(f"opt : {optCost}")
-
-
-        inputNodefeature.append(node_feature)
-        inputEdgeindex.append(edge_index) 
-        inputEdgeweight.append(edge_weight)
-        y_CE.append(y_ce) 
-        opt.append(optCost)
-
-        # covert to tensor 
-    tensor_Node_feature = torch.tensor(np.array(inputNodefeature) , dtype=torch.float)
-    tensor_Edge_index = torch.tensor(np.array(inputEdgeindex) ,dtype=torch.long)
-    tensor_Edge_weight = torch.tensor(np.array(inputEdgeweight) , dtype=torch.float)
-    tensor_y_CE = torch.tensor(np.array(y_CE) , dtype=torch.long)  
-    tensor_opt = torch.tensor(np.array(opt),dtype=torch.float32)
-
-    print(tensor_Node_feature.shape) 
-    print(tensor_Edge_index.shape) 
-    print(tensor_Edge_weight.shape)
-    print(tensor_y_CE.shape)
-    print(tensor_opt.shape) 
-
-    if save :
-        torch.save(tensor_Node_feature,  savePath+"node_feature.pt")
-        torch.save(tensor_Edge_index,    savePath+"edge_index.pt")
-        torch.save(tensor_Edge_weight,   savePath+"edge_weight.pt"  ) 
-        torch.save(tensor_y_CE,          savePath+"labels_CE.pt")
-        torch.save(tensor_opt,           savePath+"opt.pt")
-main()
+    for i , process in enumerate(process_pool):
+        process.join() 
+        print(f"process {i} end !")
+        
+    
+    
+    Assembly(arg.num_workers , arg.s_path , "node_feature","edge_index","edge_weight","labels_COO","labels_CE","opt")
+    

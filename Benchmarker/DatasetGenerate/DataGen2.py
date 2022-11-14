@@ -145,14 +145,13 @@ def sol_to_adjency(sampleSize , solutionNodes,table , cycle=True):
             
             
 
-def Generate(Dataset_size=4000 ,save=False ,  output_path="./Testdata.json",savePath=store_path1): 
+def Generate(Dataset_size=4 ,save=False ,  output_path="./Testdata.json",savePath=store_path1): 
     
     for i in range(Dataset_size): 
       
         sample , vehicleNum = Sampling(8)  
         #sample = [str(i) for i in range(6)]
-        vehicleNum = 1 
-        sample = list(sample)
+
         sequence = sorted(list(set(sample)),key = lambda i : int(i)) 
         sequenceTable = {int(i):sequence.index(i) for i in sample }
         # print(f"sample :{sample}")
@@ -174,7 +173,7 @@ def Generate(Dataset_size=4000 ,save=False ,  output_path="./Testdata.json",save
         labels,CElabels = sol_to_adjency(len(sample) , labels , sequenceTable) 
         
         #print(f"node_feature:  {node_features} ")
-        print(f"y : {labels}, y_CE : {CElabels} opt:{optCost}" )
+        print(f"y : {labels}, y_CE : {CElabels} opt:{optCost}" ) 
         #print("#######################")
         
         

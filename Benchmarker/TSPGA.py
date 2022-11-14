@@ -72,7 +72,7 @@ class Genetic_Algorithms:
     @classmethod
     def Create_GA_Instance(cls, initial_solution, vehicle_num, plotting=False):
         cls.Parameter()
-        return cls(initial_solution, vehicle_num)
+        return cls(initial_solution,vehicle_num)
 
     def MultiVehicle_adjust(self):
         base = 1000
