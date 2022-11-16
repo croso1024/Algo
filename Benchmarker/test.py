@@ -14,6 +14,7 @@ for i in range(5):
 
     p = Process(target=sleeppp , args=(i,r(3,5)) )
     p_set.append(p)
+p_set.append(Process(target=sleeppp , args=(11,10) ))
 
 for i,p in enumerate(p_set): 
     print(i,"start")

@@ -1,11 +1,11 @@
-
+from datetime import datetime 
 import networkx as nx 
 import numpy as np 
 from concorde.tsp import TSPSolver 
 
 import argparse  ,torch , time 
 from tqdm import tqdm 
-import os ,shutil
+import os ,shutil,json
 
 """
     2022 - 11 - 13 
@@ -23,7 +23,7 @@ import os ,shutil
 """
 
 
-    
+
     
 
 def Sampler(Stations , size=5) : # --> generate the random list  ! just for single vehicle 
@@ -99,69 +99,81 @@ def CCO_have_edge(tmp , u,v) -> bool :
             return True 
         else : pass 
         
-    return False
-
+    return False      
+                      
 def COO_transform(label_CE , subGraph,indexTable): 
     tmp = label_CE[:].tolist()
-   
+                      
     tmp.append(tmp[0])
-
+                      
     COO_edge_labels = [] 
-    
+                      
     for u,v in subGraph.edges: 
         # print(indexTable[u],indexTable[v])
         if CCO_have_edge(tmp,indexTable[u],indexTable[v] ) : 
-            COO_edge_labels.append(1)
-        else:
-            COO_edge_labels.append(0)
-    # print(COO_edge_labels)
-    
-    return COO_edge_labels 
-
-
-
-
-def Generator(
-                    SourceGraph,
-                    Stations , 
-                    All_pair_cost ,
-                    sampleSize = 20 ,
-                    dataSize=100 ,
-                    save=True , 
-                    number=1, 
-                    savePath=None,
-                    
-              ):
+            COO_edge_labels.append(1)  
+        else:                          
+            COO_edge_labels.append(0)  
+    # print(COO_edge_labels)           
+                                       
+    return COO_edge_labels             
+                                       
+                                       
+def debug_logger(log_path , info) :    
+    t = datetime.now().isoformat()     
+    with open(log_path ,"a") as file : 
+                                       
+        file.write(str(datetime.now()))
+        file.write(json.dumps(info))
+        file.write("\n")
+        
+                                       
+def Generator(                         
+                    SourceGraph,       
+                    Stations ,         
+                    All_pair_cost ,    
+                    sampleSize = 20 ,  
+                    dataSize=100 ,     
+                    save=True ,        
+                    number=1,          
+                    savePath=None, 
+                                  
+              ):                  
     assert savePath and SourceGraph , "map error"
-
+                                  
     Stations_length = len(Stations) - 1
     inputNodefeature = []  # --> Dijksta matrix  
-    inputEdgeindex = []  
-    inputEdgeweight = [] 
-    y_CCO = [] 
-    y_CE = []
-    opt = []
+    inputEdgeindex = []           
+    inputEdgeweight = []          
+    y_CCO = []                    
+    y_CE = []                     
+    opt = []                      
+                                  
+    Debug_logger = []             
+    Debug_logger_path = savePath
 
     start = time.time()
     
     for i in tqdm(range(dataSize)):
+        try : 
+            problem_instance = Sampler(Stations , sampleSize)
+            
+            node_feature , edge_index , edge_weight , subGraph, reindex= GraphFeature(problem_instance,SourceGraph=SourceGraph)
+            
+            y_ce , optCost = concorde_Solver(node_feature)
+            
+            COO_edge_labels = COO_transform(y_ce,subGraph,reindex)
+            
 
-        problem_instance = Sampler(Stations , sampleSize)
+            inputNodefeature.append(node_feature)
+            inputEdgeindex.append(edge_index) 
+            inputEdgeweight.append(edge_weight)
+            y_CCO.append(COO_edge_labels)
+            y_CE.append(y_ce) 
+            opt.append(optCost)
         
-        node_feature , edge_index , edge_weight , subGraph, reindex= GraphFeature(problem_instance,SourceGraph=SourceGraph)
-        
-        y_ce , optCost = concorde_Solver(node_feature)
-        
-        COO_edge_labels = COO_transform(y_ce,subGraph,reindex)
-        
-
-        inputNodefeature.append(node_feature)
-        inputEdgeindex.append(edge_index) 
-        inputEdgeweight.append(edge_weight)
-        y_CCO.append(COO_edge_labels)
-        y_CE.append(y_ce) 
-        opt.append(optCost)
-    
+        except : 
+            debug_logger(Debug_logger_path+"log.txt" , f"thread {i} raise a error when generate ")
     # covert to tensor 
     tensor_Node_feature = torch.tensor(np.array(inputNodefeature) , dtype=torch.float)
     tensor_Edge_index = torch.tensor(np.array(inputEdgeindex) ,dtype=torch.long)
@@ -179,12 +191,13 @@ def Generator(
         
         
         savePath =  savePath + str(number) 
+
+        #savePath = savePath + str(np.random.randint(low=1,high=99999))
         print(savePath , '---------------------------------')
         try: 
-            
             os.mkdir(savePath) 
         except: 
-        
+            debug_logger(Debug_logger_path+"log.txt" , f"thread {i} raise a error when SAVE ")
             raise BaseException("This directory is exist !!! ERROR")
 
 
@@ -202,17 +215,22 @@ def Generator(
         
     return 
         
-# store path  is terminal : /home/python_code/GNN/Dataset/date 
 # in every process /home/python_code/GNN/Dataset/ date + number / node_feature...
 
 def Assembly(num_workers,store_path,*target): 
     print("start assemble the dataset")
-    #print(target)
-    tmp_dirs = [store_path+str(i) for i in range(num_workers)]
     
+    """
+    2022-11-16  use the os.listdir to grab all directory in the path  
+    tmp_dirs = [store_path+str(i) for i in range(num_workers)]
     
     #check those folder is exist 
     tmp_dirs = list(filter(lambda path:os.path.isdir(path) , tmp_dirs) )
+    """
+    print(store_path)
+    tmp_dirs= list(filter( lambda x : os.path.isdir(store_path+x) , list(os.listdir(store_path))) )
+    print(tmp_dirs)
+    tmp_dirs = [store_path+i for i in tmp_dirs[:]]
     print(tmp_dirs)
     for t in target: 
 

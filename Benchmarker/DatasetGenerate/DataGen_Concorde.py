@@ -16,7 +16,8 @@
 """
 
 
-Path = "/home/croso1024/python_code/Algorithms/Benchmarker"
+#Path = "/home/croso1024/python_code/Algorithms/Benchmarker"
+Path =  "/home/kangli/Ming_ws/Algorithms/Benchmarker"
 import sys 
 if not Path in sys.path : sys.path.append(Path)
 
@@ -68,7 +69,8 @@ if __name__ == "__main__":
             arg.num_samples//arg.num_workers, 
             arg.save, 
             # arg._num_workers , 
-            i , 
+            #i , 
+            np.random.randint(low=1,high=99999),
             arg.s_path
         )
         
