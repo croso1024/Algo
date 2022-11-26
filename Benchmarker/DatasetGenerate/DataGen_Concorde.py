@@ -16,8 +16,8 @@
 """
 
 
-#Path = "/home/croso1024/python_code/Algorithms/Benchmarker"
-Path =  "/home/kangli/Ming_ws/Algorithms/Benchmarker"
+Path = "/home/croso1024/python_code/Algorithms/Benchmarker"
+#Path =  "/home/kangli/Ming_ws/Algorithms/Benchmarker"
 import sys 
 if not Path in sys.path : sys.path.append(Path)
 
@@ -42,6 +42,7 @@ if __name__ == "__main__":
     argument.add_argument("--node_dim",type=int , default=20) 
     argument.add_argument("--num_samples",type=int , default=10)
     argument.add_argument("--num_workers",type=int , default=1)
+    argument.add_argument("--self_loop" , action="store_true" , default=False)
     argument.add_argument("--save",action="store_true",default=False)
     arg = argument.parse_args()
     assert arg.s_path[-1] == "/" , "Store path lost the '/'   " 
@@ -55,8 +56,9 @@ if __name__ == "__main__":
     print(type(All_pair_cost))
 
     # add self-loop to graph
-    for node in Stations: 
-        SourceGraph.add_edge(node,node,weight=0)
+    if arg.self_loop : 
+        for node in Stations: 
+            SourceGraph.add_edge(node,node,weight=0)
     
     process_pool = []
     for i in range(arg.num_workers): 

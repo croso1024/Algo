@@ -8,8 +8,7 @@ from tqdm import tqdm
 import os ,shutil,json
 
 """
-    2022 - 11 - 13 
-    
+    2022 - 11 - 13 ---------------------------------------------------------------------
     A standard TSP instance generator utilize function package  ,    
     
     ##### 1. multi-process 
@@ -19,6 +18,12 @@ import os ,shutil,json
     ##### 2. COO-format edge labels enable ! 
 
         use the labels_CE & subGraph( return from GraphFeature ) to produce the COO-format edge connectively labels 
+    
+    2022 - 11 - 26 ---------------------------------------------------------------------
+    
+    Add a flag to decide wheather the self-loop is enable , 
+    and add edgeIndex as the argument in COO format transform 
+    cause we want to use 2 x edge_num ( use edge_index ) to generate the labels_COO 
     
 """
 
@@ -100,16 +105,18 @@ def CCO_have_edge(tmp , u,v) -> bool :
         else : pass 
         
     return False      
-                      
+""" 
+    2022-11-26 modift , info see above 
+    
 def COO_transform(label_CE , subGraph,indexTable): 
     tmp = label_CE[:].tolist()
                       
     tmp.append(tmp[0])
                       
     COO_edge_labels = [] 
-                      
+    print(len(subGraph.edges))
+    
     for u,v in subGraph.edges: 
-        # print(indexTable[u],indexTable[v])
         if CCO_have_edge(tmp,indexTable[u],indexTable[v] ) : 
             COO_edge_labels.append(1)  
         else:                          
@@ -117,7 +124,28 @@ def COO_transform(label_CE , subGraph,indexTable):
     # print(COO_edge_labels)           
                                        
     return COO_edge_labels             
+"""                                    
+
+def COO_transform(label_CE , subGraph,indexTable , edgeIndex): 
+    tmp = label_CE[:].tolist()
+                      
+    tmp.append(tmp[0])
+                      
+    COO_edge_labels = [] 
+
+    for u , v in edgeIndex : 
+        if CCO_have_edge(tmp , u ,v ): 
+            COO_edge_labels.append(1) 
+        else : 
+            COO_edge_labels.append(0) 
+    # for u,v in subGraph.edges: 
+    #     if CCO_have_edge(tmp,indexTable[u],indexTable[v] ) : 
+    #         COO_edge_labels.append(1)  
+    #     else:                          
+    #         COO_edge_labels.append(0)  
+    # # print(COO_edge_labels)           
                                        
+    return COO_edge_labels       
                                        
 def debug_logger(log_path , info) :    
     t = datetime.now().isoformat()     
@@ -162,7 +190,7 @@ def Generator(
             
             y_ce , optCost = concorde_Solver(node_feature)
             
-            COO_edge_labels = COO_transform(y_ce,subGraph,reindex)
+            COO_edge_labels = COO_transform(y_ce,subGraph,reindex , edgeIndex=edge_index)
             
 
             inputNodefeature.append(node_feature)
@@ -171,6 +199,7 @@ def Generator(
             y_CCO.append(COO_edge_labels)
             y_CE.append(y_ce) 
             opt.append(optCost)
+     
         
         except : 
             debug_logger(Debug_logger_path+"log.txt" , f"thread {i} raise a error when generate ")
@@ -235,10 +264,14 @@ def Assembly(num_workers,store_path,*target):
     for t in target: 
 
         t+= ".pt"
-        file = torch.concat(tuple(
-            [torch.load(Dir+"/"+t) for Dir in tmp_dirs]  , 
-            
-        ) ,dim=0)
+        tensorData = list()
+        for Dir in tmp_dirs : 
+            try: 
+                tensorData.append(torch.load(Dir+"/"+t))
+            except: print("Dir ",Dir)
+
+     
+        file = torch.concat(tuple(tensorData),dim=0)
         torch.save(file , store_path+t)
         print(f"concat the {t} {file.shape} has done ")
 
