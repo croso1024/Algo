@@ -15,7 +15,7 @@ class node :
         return (self.x,self.y)
         
 """
-calculate the distance between two nodes , 
+calculate the distance between two nodes , distance collector is for plot 
 """
 def distance(node1,node2,distance_collector=None) -> float : 
     dis = math.sqrt(  pow((node1.x - node2.x),2) + pow((node1.y-node2.y),2) )
@@ -34,10 +34,10 @@ def node_coordinateFunc(mode:str) -> node :
     elif mode == "irregular" : 
         return node(x=float(pow(rint(low=1,high=10),1+r())),y=float(pow(rint(low=1,high=10),1+r())))
 
-def squareMap(node_num:int, output_path:str ): 
+def squareMap(node_num:int, output_path:str ,mode = "unit"): 
     
     station_list = [str(i) for i in range(node_num)]
-    nodes = [node_coordinateFunc("irregular") for i in range(node_num) ]
+    nodes = [node_coordinateFunc(mode) for i in range(node_num) ]
     distanceCollector = [] 
 
     adjency_matrix = np.zeros((node_num,node_num) , dtype=float) 
@@ -56,7 +56,7 @@ def squareMap(node_num:int, output_path:str ):
         file.write(json.dumps(data)) 
 
 if __name__ == "__main__": 
-    squareMap(70,"DatasetGenerate/trainMap_square_irregular.json")
+    squareMap(70,"DatasetGenerate/trainMap_square_GCN.json")
 
 # with open("DatasetGenerate/trainMap_square.json", "r") as file : 
 #     data = json.load(file) 

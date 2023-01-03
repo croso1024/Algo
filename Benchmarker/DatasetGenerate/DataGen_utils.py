@@ -25,11 +25,33 @@ import os ,shutil,json
     and add edgeIndex as the argument in COO format transform 
     cause we want to use 2 x edge_num ( use edge_index ) to generate the labels_COO 
     
+    2023 - 01 - 04 --------------------------------------
+    
+    1.Remove the graph loading from Benchmarker, replace by the graphLoading
+    2.Add node coordinate extract in graph feature , to fixed the node-feature representation to learning 
 """
 
 
-
-    
+def GraphLoading(m_path):  
+    sourceGraph = nx.Graph() 
+    with open(m_path ,'r') as file : 
+        graph = json.load(file) 
+        nodes = graph['station']
+        dimension = len(nodes)
+        adjencyMatrix = graph['adjencyMatrix']
+        node_features = graph['node_feature']
+        assert dimension == len(adjencyMatrix[0])  
+         
+    for node in nodes: 
+        sourceGraph.add_node(node , node_features=node_features[node])
+    for i , node  in enumerate(nodes): 
+        for j in range(i+1 , dimension): 
+            cost = adjencyMatrix[i][j] 
+            if cost : 
+                sourceGraph.add_edge(nodes[i],nodes[j] , weight=cost)
+    all_pair_cost = dict(nx.all_pairs_dijkstra_path_length(sourceGraph))  
+    all_pair_path = dict(nx.all_pairs_dijkstra_path(sourceGraph))
+    return sourceGraph , all_pair_cost , all_pair_path 
 
 def Sampler(Stations , size=5) : # --> generate the random list  ! just for single vehicle 
     out =  list(np.random.choice(Stations , size , replace=False) )
@@ -90,7 +112,7 @@ def concorde_Solver(dist_matrix , vehicle_num=1) -> list:     #--> output opt , 
     #print(f"Debug output-tour : {output.tour}")
 
     #print(f"Debug output cost : {output.optimal_value}")
-    return output.tour , int(output.optimal_value/100)
+    return output.tour , float(output.optimal_value/100)
 
 
 # check this edge is in labels_CE , note the tmp is a duplicate of labels_CE
@@ -138,13 +160,7 @@ def COO_transform(label_CE , subGraph,indexTable , edgeIndex):
             COO_edge_labels.append(1) 
         else : 
             COO_edge_labels.append(0) 
-    # for u,v in subGraph.edges: 
-    #     if CCO_have_edge(tmp,indexTable[u],indexTable[v] ) : 
-    #         COO_edge_labels.append(1)  
-    #     else:                          
-    #         COO_edge_labels.append(0)  
-    # # print(COO_edge_labels)           
-                                       
+     
     return COO_edge_labels       
                                        
 def debug_logger(log_path , info) :    
@@ -189,6 +205,8 @@ def Generator(
             node_feature , edge_index , edge_weight , subGraph, reindex= GraphFeature(problem_instance,SourceGraph=SourceGraph)
             
             y_ce , optCost = concorde_Solver(node_feature)
+            # 12-04 find a buuger that sometime (3%) the slover cannot find solution , when use the multi-proces
+            if optCost >1000 : continue  
             
             COO_edge_labels = COO_transform(y_ce,subGraph,reindex , edgeIndex=edge_index)
             
@@ -203,6 +221,7 @@ def Generator(
         
         except : 
             debug_logger(Debug_logger_path+"log.txt" , f"thread {i} raise a error when generate ")
+            continue
     # covert to tensor 
     tensor_Node_feature = torch.tensor(np.array(inputNodefeature) , dtype=torch.float)
     tensor_Edge_index = torch.tensor(np.array(inputEdgeindex) ,dtype=torch.long)
@@ -217,11 +236,8 @@ def Generator(
         if os.path.isdir(savePath) : pass 
         else : os.mkdir(savePath) 
         
-        
-        
         savePath =  savePath + str(number) 
 
-        #savePath = savePath + str(np.random.randint(low=1,high=99999))
         print(savePath , '---------------------------------')
         try: 
             os.mkdir(savePath) 
@@ -229,10 +245,7 @@ def Generator(
             debug_logger(Debug_logger_path+"log.txt" , f"thread {i} raise a error when SAVE ")
             raise BaseException("This directory is exist !!! ERROR")
 
-
-    
         print(f"save path : {savePath}")
-        
         torch.save(tensor_Node_feature,  savePath+"/node_feature.pt")
         torch.save(tensor_Edge_index,    savePath+"/edge_index.pt")
         torch.save(tensor_Edge_weight,   savePath+"/edge_weight.pt"  ) 
@@ -241,12 +254,10 @@ def Generator(
         torch.save(tensor_opt,           savePath+"/opt.pt")
     
     print(f"The process {number} is done  {time.time() - start }!")
-        
     return 
         
 # in every process /home/python_code/GNN/Dataset/ date + number / node_feature...
-
-def Assembly(num_workers,store_path,*target): 
+def Assembly(store_path,*target): 
     print("start assemble the dataset")
     
     """
@@ -276,7 +287,7 @@ def Assembly(num_workers,store_path,*target):
         print(f"concat the {t} {file.shape} has done ")
 
     
-    [shutil.rmtree(dirs) for dirs in tmp_dirs ]  
+    #[shutil.rmtree(dirs) for dirs in tmp_dirs ]  
 
 
 

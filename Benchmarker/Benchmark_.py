@@ -24,7 +24,7 @@ class Benchmarker(nx.Graph):
     @classmethod 
     def setting(cls,setting_file_path=None): 
         cls.source_path =setting_file_path
-        cls.Total_vehicleNum =12 
+        cls.Total_vehicleNum =1
       
         #cls.source_path = setting_file_path
 
