@@ -38,6 +38,7 @@ def squareMap(node_num:int, output_path:str ,mode = "unit"):
     
     station_list = [str(i) for i in range(node_num)]
     nodes = [node_coordinateFunc(mode) for i in range(node_num) ]
+    
     distanceCollector = [] 
 
     adjency_matrix = np.zeros((node_num,node_num) , dtype=float) 
@@ -56,7 +57,7 @@ def squareMap(node_num:int, output_path:str ,mode = "unit"):
         file.write(json.dumps(data)) 
 
 if __name__ == "__main__": 
-    squareMap(70,"DatasetGenerate/trainMap_square_GCN.json")
+    squareMap(10,"DatasetGenerate/trainMap_square_GCN.json")
 
 # with open("DatasetGenerate/trainMap_square.json", "r") as file : 
 #     data = json.load(file) 

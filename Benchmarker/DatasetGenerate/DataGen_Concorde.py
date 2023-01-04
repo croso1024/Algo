@@ -16,13 +16,13 @@
 """
 
 
-Path = "/home/croso1024/python_code/Algorithms/Benchmarker"
-#Path =  "/home/kangli/Ming_ws/Algorithms/Benchmarker"
-import sys 
-if not Path in sys.path : sys.path.append(Path)
+# Path = "/home/croso1024/python_code/Algorithms/Benchmarker"
+# #Path =  "/home/kangli/Ming_ws/Algorithms/Benchmarker"
+# import sys 
+# if not Path in sys.path : sys.path.append(Path)
+# from Benchmark_ import Benchmarker 
 
 import torch
-from Benchmark_ import Benchmarker 
 import numpy as np
 import networkx as nx
 from tqdm import tqdm 
@@ -48,14 +48,15 @@ if __name__ == "__main__":
     assert arg.s_path[-1] == "/" , "Store path lost the '/'   " 
     if not arg.concat : 
         # #### Loading map ####
-        Benchmarker.setting(arg.m_path)
-        Benchmarker.Source_graphLoading() 
-        SourceGraph = Benchmarker.SourceGraph
-        Stations = Benchmarker.station_list  
-        All_pair_cost = Benchmarker.All_pair_cost 
-        print(type(SourceGraph))
-        print(type(All_pair_cost))
-
+        # Benchmarker.setting(arg.m_path)
+        # Benchmarker.Source_graphLoading() 
+        # SourceGraph = Benchmarker.SourceGraph
+        # Stations = Benchmarker.station_list  
+        # All_pair_cost = Benchmarker.All_pair_cost 
+        # print(type(SourceGraph))
+        # print(type(All_pair_cost))
+        SourceGraph ,Stations , All_pair_cost ,ret = GraphLoading(arg.m_path) 
+        
         # add self-loop to graph
         if arg.self_loop : 
             for node in Stations: 
@@ -92,5 +93,6 @@ if __name__ == "__main__":
             
     
     if arg.concat : 
-        Assembly(arg.s_path , "node_feature","edge_index","edge_weight","labels_COO","labels_CE","opt")
+        Assembly(arg.s_path , "node_feature","edge_index" , "node_coordinate"
+                 ,"edge_weight","labels_COO","labels_CE","opt")
     
