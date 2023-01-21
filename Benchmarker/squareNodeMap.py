@@ -57,7 +57,7 @@ def squareMap(node_num:int, output_path:str ,mode = "unit"):
         file.write(json.dumps(data)) 
 
 if __name__ == "__main__": 
-    squareMap(10,"DatasetGenerate/trainMap_square_GCN.json")
+    squareMap(10,"DatasetGenerate/IG_test.json")
 
 # with open("DatasetGenerate/trainMap_square.json", "r") as file : 
 #     data = json.load(file) 
